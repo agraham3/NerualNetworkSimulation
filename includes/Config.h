@@ -12,7 +12,9 @@ const int FRAMES_PER_SEC = 20;
 // Num of objects able to be detected by the radar: 5
 //    Note: I can see n objects however I push back an x and a y
 //    so 5 * 2 = 10
-const int LAYER_ZERO_SIZE = 15;
+const int NUM_ACTIONS = 5;
+const int NUM_RADAR_CAN_SEE = 5;
+const int LAYER_ZERO_SIZE = NUM_ACTIONS + NUM_RADAR_CAN_SEE * 2;
 
 // Math const
 const double PI = 3.1415926535;

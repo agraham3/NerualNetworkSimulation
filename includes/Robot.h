@@ -29,7 +29,7 @@ class Robot : public Object {
     nn.create_layer(7);                    // last layer size = number of actions
   }
 
-  void execute();
+  bool execute();
   std::vector< Vec2f > radar();
 
   void draw();

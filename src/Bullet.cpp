@@ -2,22 +2,26 @@
 #include "Functions.h"
 #include "ObjectManager.h"
 
-void Bullet::execute() {
-  move();
+bool Bullet::execute() {
+  bool moved = move();
+  if (!moved)
+    return false;
+
+  return true;
 }
 
 void Bullet::setdir(Vec2f d) {
   dir = d;
 }
 
-void Bullet::move(){
+bool Bullet::move(){
   Object::getpos() += dir;
 
   Vec2f pos = Object::getpos();
-  if (!withinArena(pos)) {
-    ObjectManager * manager = ObjectManager::getInstance();
-    manager->remove(this);
-  }
+  if (!withinArena(pos))
+    return false;
+
+  return true;
 }
 
 void Bullet::draw() {

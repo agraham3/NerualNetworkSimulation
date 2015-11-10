@@ -12,10 +12,10 @@ class Bullet : public Object {
       r_(rad), dir(d), whoShotMe_(whoShotMe)
     {}
 
-  void execute();
+  bool execute();
   std::string id() { return "bullet"; }
   void setdir(Vec2f);
-  void move();
+  bool move();
   void draw();
 
   double radius() { return r_; }

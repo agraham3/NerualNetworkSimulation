@@ -3,6 +3,7 @@
 #include "AbstractFactory.h"
 #include <cmath>
 #include <cstdlib>
+#include "Config.h"
 
 std::vector< double > Robot::robotInfo() {
   Vec2f pos = Object::getpos();
@@ -16,14 +17,17 @@ std::vector< double > Robot::robotInfo() {
 
   // push x, y from radar
   std::vector< Vec2f > list = radar();
-  for(int i = 0; i < list.size(); ++i) {
+  int numrad = list.size();
+  if (numrad > NUM_RADAR_CAN_SEE)
+    numrad = NUM_RADAR_CAN_SEE;
+  for(int i = 0; i < numrad; ++i) {
     info.push_back(list[i].x()); 
     info.push_back(list[i].y());
   }
   return info;
 }
 
-void Robot::execute() {
+bool Robot::execute() {
   nn.load(robotInfo());
   std::vector< double > output = nn.fire();
   int pos = 0;
@@ -51,9 +55,10 @@ void Robot::execute() {
   framesLived_ += 1;
   energy_ -= 1;
   if (energy_ < 0) {
-    ObjectManager * manager = ObjectManager::getInstance();
-    manager->remove(this);
+    return false;
   }
+  
+  return true;
 }
 
 std::vector< Vec2f > Robot::radar() {

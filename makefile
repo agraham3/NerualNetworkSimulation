@@ -8,9 +8,9 @@ all :
 	-o $(OBJ_NAME)
 
 mac:
-	g++ -g -Wall *.cpp src/*.cpp -I src/ -I includes/ \
+	g++ -g -Wall *.cpp src/*.cpp -w -I src/ -I includes/ \
 	-framework OpenGL \
-	`sdl2-config --cflags --libs` -lSDL2_mixer -lSDL2_image -lSDL2_ttf \
+	`sdl2-config --cflags --libs`  \
 	-o $(OBJ_NAME)
 
 run :

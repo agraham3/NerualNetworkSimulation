@@ -11,7 +11,7 @@ class Object {
    : pos(Vec2f(x, y)), r(red), g(green), b(blue)
     {}
   
-  virtual void execute() {};
+  virtual bool execute() {};
   virtual void draw() {};
   virtual std::string id() {};
   virtual Vec2f & getpos() { return pos; }
