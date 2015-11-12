@@ -18,15 +18,7 @@ class Robot : public Object {
      robotSpeed(.01), bulletSpeed(Vec2f(.05,.05)),
      score_(0), framesLived_(0), energy_(100)
   {
-    nn.create_layer(LAYER_ZERO_SIZE);
-    nn.create_layer(8);
-    nn.create_layer(5);
-    nn.create_layer(5);
-    nn.create_layer(8);
-    nn.create_layer(10);
-    nn.create_layer(10);
-    nn.create_layer(5);
-    nn.create_layer(7);                    // last layer size = number of actions
+    initBrain();
   }
 
   bool execute();
@@ -39,6 +31,11 @@ class Robot : public Object {
 
   int & score() { return score_; }
   int & energy() { return energy_; }
+  int framesLived() const { return framesLived_; }
+
+  int brainSize() const { return nn_.size(); }
+  void setBrain(NeuralNetwork nn);
+  NeuralNetwork brain() { return nn_; }
 
  private:
   double r_, vision_size, look_at, rotateSpeed, robotSpeed;
@@ -55,9 +52,10 @@ class Robot : public Object {
   void moveLeft();
   void moveRight();
 
-  NeuralNetwork nn;
+  NeuralNetwork nn_;
   void initNetwork();
   std::vector< double > fireNetwork();
+  void initBrain();
 };
 
 #endif

@@ -3,5 +3,6 @@
 
 class SizeError {};
 class NetworkNotLoaded {};
+class OverOneHunderedPercent {};
 
 #endif

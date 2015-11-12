@@ -13,7 +13,13 @@ class NeuralNetwork {
                                                //   The Fire function takes care of:
                                                //     Running the network
                                                //     Cleaning values out of the network 
-    std::vector< NeuronLayer > get_layer() {return layer;}
+    std::vector< NeuronLayer > get_layers() { return layer; }
+    NeuronLayer get_layer(int layerPosition) { return layer[layerPosition]; }
+    int size() const { return layer.size(); }
+    void clear() { layer.clear(); }
+    void set(std::vector<NeuronLayer> v) { layer = v; }
+    void replace(int layerNumber, NeuronLayer l) { layer[layerNumber] = l; }
+    
   private:
   	std::vector< NeuronLayer > layer;
 };

@@ -86,3 +86,16 @@ void regular_polygon(double cx, double cy, double r,
                      int num_segments, int gl_draw_type)  { 
   regular_polygon2(cx, cy, r, r, num_segments, gl_draw_type);
 }
+
+bool inList(int x, std::vector<int> v) {
+  bool in = false;
+  for (int i = 0; i < v.size(); ++i) {
+    if (x = v[i]) {
+      in = true;
+      break;
+    }
+  }
+
+  return in;
+}
+

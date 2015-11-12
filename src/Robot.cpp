@@ -28,8 +28,8 @@ std::vector< double > Robot::robotInfo() {
 }
 
 bool Robot::execute() {
-  nn.load(robotInfo());
-  std::vector< double > output = nn.fire();
+  nn_.load(robotInfo());
+  std::vector< double > output = nn_.fire();
   int pos = 0;
   double max = 0;
   for (int i = 0; i < output.size(); ++i) {
@@ -159,4 +159,21 @@ void Robot::draw() {
   }
   glEnd();
   glColor3f(0,0,0);
+}
+
+void Robot::initBrain() {
+  nn_.create_layer(LAYER_ZERO_SIZE);
+  nn_.create_layer(8);
+  nn_.create_layer(5);
+  nn_.create_layer(5);
+  nn_.create_layer(8);
+  nn_.create_layer(10);
+  nn_.create_layer(10);
+  nn_.create_layer(5);
+  nn_.create_layer(7);                    // last layer: size = number of actions
+}
+
+void Robot::setBrain(NeuralNetwork nn) {
+  nn_.clear();
+  nn_.set(nn.get_layers());
 }
