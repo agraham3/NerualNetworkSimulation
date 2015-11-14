@@ -10,6 +10,7 @@ class AbstractFactory {
   
   static Object* createRobot(double x=0, double y=0, double rad = .5, 
                              double red=0, double green=0, double blue=0);
+  static Object* createRobot(Object* o);
   static Object* createBullet(double x=0, double y=0, 
                               Vec2f d = Vec2f(), Object* whoShotMe = NULL,
                               double rad = .01,

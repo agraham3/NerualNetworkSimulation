@@ -2,14 +2,17 @@
 #include "Exceptions.h"
 #include "Config.h"
 
-void Learn::insert(Robot r) {
-	robot_.push_back(r);
+void Learn::insert(Object* r) {
+	if (r->id() != "robot")
+		throw NotARobot();
+
+	object_.push_back(r);
 }
 
-int Learn::score(Robot r) {
+int Learn::score(int pos) {
 	int points = 0;
-	points += r.score() * POINT_BOOSTER;
-	points += r.framesLived();
+	points += object_[pos]->score() * POINT_BOOSTER;
+	points += object_[pos]->framesLived();
 	return points;
 }
 
@@ -20,8 +23,8 @@ void Learn::bestTwo() {
 			pts2 = 0;
 
 	// Find the best two robots
-	for (int i = 0; i < robot_.size(); ++i) {
-		int points = score(robot_[i]);
+	for (int i = 0; i < object_.size(); ++i) {
+		int points = score(i);
 		if (points > pts1) {
 			// set second best
 			pts2 = pts1;
@@ -33,23 +36,23 @@ void Learn::bestTwo() {
 		}
 	}
 
-	// set r1, r2 as the positions in robot_
-	// 		where r1 is the best robot and
-	//    r2 is the second best robot
-	r1 = pos1; 
-	r2 = pos2;
+	// set o1, o2 as the positions in object_
+	// 		where o1 is the best robot and
+	//    o2 is the second best robot
+	o1 = pos1; 
+	o2 = pos2;
 }
 
-NeuralNetwork Learn::newBrain(double percentToTake) {
+NeuralNetwork* Learn::newBrain(double percentToTake) {
 	if (percentToTake > 1)
 		throw OverOneHunderedPercent();
 
-	bestTwo();			    // find the best two robots: This sets r1, r2
-											// 			where r1 is the best robot stored as a pos in robot_ and
-											//  		r2 is the second best robot stored as a pos in robot_
-	NeuralNetwork brain1 = robot_[r1].brain(),
-								brain2 = robot_[r2].brain();
-	NeuralNetwork newBrain = brain2;
+	bestTwo();			    // find the best two robots: This sets o1, o2
+											// 			where o1 is the best robot stored as a pos in object_ and
+											//  		o2 is the second best robot stored as a pos in object_
+	NeuralNetwork brain1 = *object_[o1]->brain(),
+								brain2 = *object_[o2]->brain();
+	NeuralNetwork* newBrain = new NeuralNetwork(brain2);
 
 	// Make random brains based off: brain1, brain2
 
@@ -69,9 +72,8 @@ NeuralNetwork Learn::newBrain(double percentToTake) {
 	}
 
 	// Give brain2 a percent "percentToTake" of brain1
-	for (int i = 0; i < layerPositions.size(); ++i) {
-		newBrain.replace(i, brain1.get_layer(layerPositions[i]));
-	}
+	for (int i = 0; i < layerPositions.size(); ++i)
+		newBrain->replace(i, brain1.get_layer(layerPositions[i]));
 
 	return newBrain;
 }

@@ -3,6 +3,9 @@
 
 class SizeError {};
 class NetworkNotLoaded {};
+class NoLayerZero {};
 class OverOneHunderedPercent {};
+class NotARobot {};
+class NoBrain {};
 
 #endif

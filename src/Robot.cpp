@@ -27,37 +27,58 @@ std::vector< double > Robot::robotInfo() {
   return info;
 }
 
-bool Robot::execute() {
-  nn_.load(robotInfo());
-  std::vector< double > output = nn_.fire();
-  int pos = 0;
+void Robot::handleAction(std::vector<double> act) {
+  // Movement
   double max = 0;
-  for (int i = 0; i < output.size(); ++i) {
-    double val = output[i];
-    if (val >= 0.5 && val > max) {
-      max = val;
+  int pos = 0;
+  for(int i = 0; i < 4; ++i) {
+    if (act[i] > max) {
+      max = act[i];
       pos = i;
     }
   }
 
-  if (max != 0) {
-    switch (pos) {
+  if (max > 0.5) {
+    switch(pos) {
       case 0: moveUp();      break;
-      case 1: moveDown();    break;
+      case 1: moveDown();    break; 
       case 2: moveLeft();    break;
       case 3: moveRight();   break;
-      case 4: rotateLeft();  break;
-      case 5: rotateRight(); break;
-      case 6: shoot();       break;
     }
   }
+
+  // Rotation
+  pos = 0;
+  max = 0;
+  if (act[4] > max) {
+    max = act[4];
+    pos = 4;
+  }
+  else if(act[5] > max)
+    pos = 5;
+
+  switch(pos) {
+    case 4: rotateLeft();  break;
+    case 5: rotateRight(); break;
+  }
+
+  // shoot
+  if (act[6] > 0.5) {
+    shoot();    
+    energy_ -= 5;
+  }
+}
+
+bool Robot::execute() {
+  nn_->load(robotInfo());
+  std::vector< double > output = nn_->fire();
+  handleAction(output);  
 
   framesLived_ += 1;
   energy_ -= 1;
   if (energy_ < 0) {
     return false;
   }
-  
   return true;
 }
 
@@ -147,7 +168,7 @@ void Robot::moveRight() {
 void Robot::draw() {
   Vec2f pos = Object::getpos();
   double x = pos.x(), y = pos.y();
-  double r = Object::getRed(), g = Object::getGreen(), b = Object::getBlue();
+  double r = Object::red(), g = Object::green(), b = Object::blue();
   glColor3f(r, g, b);
   regular_polygon(x, y, r_, 30, GL_TRIANGLE_FAN);           // draw robot
   regular_polygon(x, y, vision_size, 30, GL_LINE_LOOP);  // draw vision ring
@@ -162,18 +183,13 @@ void Robot::draw() {
 }
 
 void Robot::initBrain() {
-  nn_.create_layer(LAYER_ZERO_SIZE);
-  nn_.create_layer(8);
-  nn_.create_layer(5);
-  nn_.create_layer(5);
-  nn_.create_layer(8);
-  nn_.create_layer(10);
-  nn_.create_layer(10);
-  nn_.create_layer(5);
-  nn_.create_layer(7);                    // last layer: size = number of actions
-}
-
-void Robot::setBrain(NeuralNetwork nn) {
-  nn_.clear();
-  nn_.set(nn.get_layers());
+  nn_->create_layer(LAYER_ZERO_SIZE);
+  nn_->create_layer(8);
+  nn_->create_layer(5);
+  nn_->create_layer(5);
+  nn_->create_layer(8);
+  nn_->create_layer(10);
+  nn_->create_layer(10);
+  nn_->create_layer(5);
+  nn_->create_layer(7);                    // last layer: size = number of actions
 }

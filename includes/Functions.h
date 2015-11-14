@@ -1,14 +1,12 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
+#include <vector>
 #include <GL/freeglut.h>
 #include "Vec2f.h"
-#include <vector>
-#include "Object.h"
 
 // Game Related Functions
 bool withinArena(Vec2f);
-bool circleCollisionCheck(Object* a, Object* b, bool vision = false);
 
 
 // Math

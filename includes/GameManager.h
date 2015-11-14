@@ -5,6 +5,7 @@
 #include "Drawing.h"
 #include "AbstractFactory.h"
 #include "ObjectManager.h"
+#include "NeuralNetwork.h"
 
 class GameManager {
 public:
@@ -23,8 +24,8 @@ private:
   ObjectManager * manager_;
 
   void eventHandler();
-  void createRobot();
-  void createRobots();
+  void createRobot(bool useLearning);
+  void createRobots(bool useLearning=false);
   void updateScreen();
   int getDelayTime(int start, int end);
   void delay(int start, int end);

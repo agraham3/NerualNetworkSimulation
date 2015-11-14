@@ -6,6 +6,15 @@ Object* AbstractFactory::createRobot(double x, double y, double rad,
   return new Robot(x, y, rad, red, green, blue);
 }
 
+Object* AbstractFactory::createRobot(Object* o) {
+	Vec2f pos = o->getpos();
+	Robot * r = new Robot(pos.x(), pos.y(), o->red(), o->green(), o->blue());
+	r->setBrain(o->brain());
+	r->score() = o->score();
+	r->framesLived() = o->framesLived();
+	return r;
+}
+
 Object* AbstractFactory::createBullet(double x, double y, 
                                       Vec2f d, Object* whoShotMe,
                                       double rad,

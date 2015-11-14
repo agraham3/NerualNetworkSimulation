@@ -21,6 +21,7 @@ class Bullet : public Object {
   double radius() { return r_; }
 
   Object* whoShotMe() { return whoShotMe_; }
+  void setWhoShotMe(Object* o) { whoShotMe_ = o; }
 
  private:
   double r_;

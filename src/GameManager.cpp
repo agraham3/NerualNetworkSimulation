@@ -1,6 +1,8 @@
 #include "GameManager.h"
 #include <cstdlib>
 #include "Config.h"
+#include "Object.h"
+#include "NeuralNetwork.h"
 
 void GameManager::checkRestart() {
   static int restartTimer = RESTART_TIMER;
@@ -8,10 +10,15 @@ void GameManager::checkRestart() {
   
   if (restartTimer == 0) {
     manager_->clear();
-    createRobots();
     restartTimer = RESTART_TIMER;
-
     ++generationNumber;
+
+    bool useLearning = false;
+    if (generationNumber > 0)
+      useLearning = true;
+
+    createRobots(useLearning);
+    manager_->learn().clear();
     std::cout << "Generation Number: " << generationNumber << std::endl;
   }
 
@@ -24,7 +31,7 @@ void GameManager::run() {
   std::cout << "Generation Number: " << 0 << std::endl;
   while(!quitProgram_) {
     int start = SDL_GetTicks();
-
+    
     eventHandler();
     bool ran = manager_->execute();
     updateScreen();
@@ -51,20 +58,27 @@ void GameManager::eventHandler() {
   }
 }
 
-void GameManager::createRobot() {
+void GameManager::createRobot(bool useLearning) {
   double x = ((double)rand() / RAND_MAX) * 2 - 1, 
          y = ((double)rand() / RAND_MAX) * 2 - 1;
 
   double r = ((double)rand() / RAND_MAX) / 2,
          g = ((double)rand() / RAND_MAX) / 2,
          b = ((double)rand() / RAND_MAX) / 2;
-         
-  manager_->insert(AbstractFactory::createRobot(x, y, .05, r, g, b));
+  Object * robot = AbstractFactory::createRobot(x, y, .05, r, g, b);
+
+  if (useLearning)
+    robot->setBrain(manager_->learn().newBrain(0.60));
+
+  if (robot->brain()->size() == 0)
+    throw NoBrain();
+
+  manager_->insert(robot);
 }
 
-void GameManager::createRobots() {
+void GameManager::createRobots(bool useLearning) {
   for (int i = 0; i < NUM_ROBOTS; ++i)
-    createRobot();
+    createRobot(useLearning);
 }
 
 void GameManager::updateScreen() {

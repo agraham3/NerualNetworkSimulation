@@ -4,8 +4,6 @@
 #include "Neuron.h"
 #include "Exceptions.h"
 
-class NoLayerZero {};
-
 /*
   Note: Make the first layer equal to the number of inputs
 
@@ -19,6 +17,13 @@ class NoLayerZero {};
 class NeuronLayer {
   public:
   	NeuronLayer() {}
+    NeuronLayer(const NeuronLayer& nl)
+    : neuron(nl.neurons())
+    {}
+
+    NeuronLayer operator=(NeuronLayer nl) {
+      return NeuronLayer(nl);
+    }
 
     void random_weights(int n);
 
@@ -38,6 +43,9 @@ class NeuronLayer {
     }
 
     int size() { return neuron.size(); }
+
+    std::vector<Neuron> neurons() { return neuron; }
+    std::vector<Neuron> neurons() const { return neuron; }
 
   private:
   	std::vector< Neuron > neuron;

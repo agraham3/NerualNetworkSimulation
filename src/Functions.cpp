@@ -14,21 +14,6 @@ bool withinArena(Vec2f d) {
   return true;
 }
 
-bool circleCollisionCheck(Object* a, Object* b, bool vision) {
-  Vec2f apos = a->getpos();
-  Vec2f bpos = b->getpos();
-
-  double dx   = apos.x() - bpos.x(),
-         dy   = apos.y() - bpos.y(),
-         dist = sqrt(dx*dx + dy*dy);
-
-  if (vision) {
-    return (dist < a->visionSize() + b->radius());
-  }
-
-  return (dist < (a->radius() + b->radius()));
-}
-
 void cartesian(double & x, double & y, double r, double theta) {
   x = r * cos(theta) + x;
   y = r * sin(theta) + y;
@@ -90,7 +75,7 @@ void regular_polygon(double cx, double cy, double r,
 bool inList(int x, std::vector<int> v) {
   bool in = false;
   for (int i = 0; i < v.size(); ++i) {
-    if (x = v[i]) {
+    if (x == v[i]) {
       in = true;
       break;
     }

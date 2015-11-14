@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include "Object.h"
+#include "Learn.h"
 
 class ObjectManager {
  public:
@@ -29,14 +30,15 @@ class ObjectManager {
   void draw();
 
   std::vector< Object* > getList() const { return list; }
+  Learn& learn() { return learn_; }
 
  private:
-  ObjectManager() {}
-  void collision();
-  
   static ObjectManager * p;
   std::vector< Object*  > list;
+  Learn learn_;
 
+  ObjectManager() {}
+  void collision();
 };
 
 #endif

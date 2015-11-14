@@ -11,6 +11,10 @@ class Neuron {
    : weights(n.getWeights()), inputs(n.getInputs())
    {}
 
+  Neuron operator=(Neuron n) {
+    return Neuron(n);
+  }
+
   std::vector< double > getWeights() const { return weights; }
   std::vector< double > getInputs() const { return inputs; }
 
