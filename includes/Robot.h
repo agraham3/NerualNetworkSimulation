@@ -16,7 +16,8 @@ class Robot : public Object {
    : Object(x, y, red, green, blue), r_(rad), 
      vision_size(.4), look_at(PI/2), rotateSpeed(PI/16),
      robotSpeed(.01), bulletSpeed(Vec2f(.05,.05)),
-     score_(0), framesLived_(0), energy_(200), nn_(new NeuralNetwork)
+     score_(0), framesLived_(0), energy_(ROBOT_ENERGY), numBullets_(NUM_ROBOT_BULLETS),
+     nn_(new NeuralNetwork)
   {
     initBrain();
   }
@@ -48,7 +49,7 @@ class Robot : public Object {
  private:
   double r_, vision_size, look_at, rotateSpeed, robotSpeed;
   Vec2f bulletSpeed;
-  int score_, framesLived_, energy_;
+  int score_, framesLived_, energy_, numBullets_;
   std::vector< double > robotInfo();
 
   void shoot();

@@ -13,11 +13,8 @@ void GameManager::checkRestart() {
     restartTimer = RESTART_TIMER;
     ++generationNumber;
 
-    bool useLearning = false;
-    if (generationNumber > 0)
-      useLearning = true;
-
-    createRobots(useLearning);
+    bool useLearning = true;
+    createRobots(useLearning, generationNumber);
     manager_->learn().clear();
     std::cout << "Generation Number: " << generationNumber << std::endl;
   }
@@ -31,7 +28,7 @@ void GameManager::run() {
   std::cout << "Generation Number: " << 0 << std::endl;
   while(!quitProgram_) {
     int start = SDL_GetTicks();
-    
+
     eventHandler();
     bool ran = manager_->execute();
     updateScreen();
@@ -76,9 +73,22 @@ void GameManager::createRobot(bool useLearning) {
   manager_->insert(robot);
 }
 
-void GameManager::createRobots(bool useLearning) {
-  for (int i = 0; i < NUM_ROBOTS; ++i)
-    createRobot(useLearning);
+void GameManager::createRobots(bool useLearning, int generationNumber) {
+  // randomaly add: dumb robots
+  //                brain layer swaps
+  for (int i = 0; i < NUM_ROBOTS; ++i) {
+    int x = rand() % 10;
+    if (x > 8 && generationNumber != 0) {
+      std::cout << "Adding a dumb robot" << std::endl;
+      createRobot(!useLearning);
+    }
+    else {
+      // if (x < 2 && generationNumber != 0) { 
+      //   do a brain layer swap 
+      // }
+      createRobot(useLearning);
+    }
+  }
 }
 
 void GameManager::updateScreen() {

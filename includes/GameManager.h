@@ -25,7 +25,7 @@ private:
 
   void eventHandler();
   void createRobot(bool useLearning);
-  void createRobots(bool useLearning=false);
+  void createRobots(bool useLearning=false, int generationNumber=0);
   void updateScreen();
   int getDelayTime(int start, int end);
   void delay(int start, int end);

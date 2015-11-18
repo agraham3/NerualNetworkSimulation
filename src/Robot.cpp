@@ -11,9 +11,11 @@ std::vector< double > Robot::robotInfo() {
   std::vector< double > info;
   info.push_back(pos.x());
   info.push_back(pos.y());
+  info.push_back(look_at);
   info.push_back(framesLived_);
   info.push_back(score_);
   info.push_back(energy_);
+  info.push_back(numBullets_);
 
   // push x, y from radar
   std::vector< Vec2f > list = radar();
@@ -29,26 +31,26 @@ std::vector< double > Robot::robotInfo() {
 
 void Robot::handleAction(std::vector<double> act) {
   // Movement
-  if (act[0] > act[1])
+  if (act[0] >= 0.5 && act[0] > act[1])
     moveUp();
-  else
+  else if (act[1] > 0.5)
     moveDown();
 
-  if (act[2] > act[3])
+  if (act[2] >= 0.5 && act[2] > act[3])
     moveLeft();
-  else
+  else if (act[3] >= 0.5)
     moveRight();
 
   // Rotation
-  if (act[4] > act[5])
+  if (act[4] >= 0.5 && act[4] > act[5])
     rotateLeft();
-  else
+  else if (act[5] >= 0.5)
     rotateRight();
 
   // shoot
-  if (act[6] > 0.5) {
+  if (act[6] >= 0.5) {
     shoot();    
-    energy_ -= 5;
+    energy_ -= 10;
   }
 }
 
@@ -92,7 +94,8 @@ std::vector< Vec2f > Robot::radar() {
 }
 
 void Robot::shoot() {
-  ObjectManager * manager = ObjectManager::getInstance();
+  if (numBullets_ == 0)
+    return;
 
   // get robots position
   Vec2f pos = Object::getpos();
@@ -109,7 +112,9 @@ void Robot::shoot() {
   dir *= bulletSpeed;
 
   // create bullet
+  ObjectManager * manager = ObjectManager::getInstance();
   manager->insert(AbstractFactory::createBullet(x, y, dir, this));
+  --numBullets_;
 }
 
 void Robot::rotateLeft() {
@@ -174,5 +179,5 @@ void Robot::initBrain() {
   nn_->create_layer(10);
   nn_->create_layer(10);
   nn_->create_layer(5);
-  nn_->create_layer(7);                    // last layer: size = number of actions
+  nn_->create_layer(NUMBER_ROBOT_ACTIONS);                    // last layer: size = number of actions
 }
