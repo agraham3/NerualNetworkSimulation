@@ -29,38 +29,21 @@ std::vector< double > Robot::robotInfo() {
 
 void Robot::handleAction(std::vector<double> act) {
   // Movement
-  double max = 0;
-  int pos = 0;
-  for(int i = 0; i < 4; ++i) {
-    if (act[i] > max) {
-      max = act[i];
-      pos = i;
-    }
-  }
+  if (act[0] > act[1])
+    moveUp();
+  else
+    moveDown();
 
-  if (max > 0.5) {
-    switch(pos) {
-      case 0: moveUp();      break;
-      case 1: moveDown();    break; 
-      case 2: moveLeft();    break;
-      case 3: moveRight();   break;
-    }
-  }
+  if (act[2] > act[3])
+    moveLeft();
+  else
+    moveRight();
 
   // Rotation
-  pos = 0;
-  max = 0;
-  if (act[4] > max) {
-    max = act[4];
-    pos = 4;
-  }
-  else if(act[5] > max)
-    pos = 5;
-
-  switch(pos) {
-    case 4: rotateLeft();  break;
-    case 5: rotateRight(); break;
-  }
+  if (act[4] > act[5])
+    rotateLeft();
+  else
+    rotateRight();
 
   // shoot
   if (act[6] > 0.5) {
@@ -76,9 +59,9 @@ bool Robot::execute() {
 
   framesLived_ += 1;
   energy_ -= 1;
-  if (energy_ < 0) {
+  if (energy_ < 0)
     return false;
-  }
+  
   return true;
 }
 

@@ -3,11 +3,7 @@
 #include "ObjectManager.h"
 
 bool Bullet::execute() {
-  bool moved = move();
-  if (!moved)
-    return false;
-
-  return true;
+  return move();
 }
 
 void Bullet::setdir(Vec2f d) {
