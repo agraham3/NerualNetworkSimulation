@@ -16,13 +16,9 @@ class Robot : public Object {
    : Object(x, y, red, green, blue), r_(rad), 
      vision_size(.4), look_at(PI/2), rotateSpeed(PI/16),
      robotSpeed(.01), bulletSpeed(Vec2f(.05,.05)),
-     score_(0), framesLived_(0), energy_(ROBOT_ENERGY), numBullets_(NUM_ROBOT_BULLETS),
-     nn_(new NeuralNetwork)
+     score_(0), framesLived_(0), energy_(ROBOT_ENERGY), numBullets_(NUM_ROBOT_BULLETS)
   {
     initBrain();
-  }
-  ~Robot() {
-    delete nn_;
   }
 
   std::string id() { return "robot"; }
@@ -40,11 +36,7 @@ class Robot : public Object {
   int& energy() { return energy_; }
   int& framesLived() { return framesLived_; }
 
-  NeuralNetwork* brain() { return nn_; }
-  void setBrain(NeuralNetwork* b) {
-    nn_->clear();
-    nn_ = b;
-  }
+  NeuralNetwork& brain() { return nn_; }
 
  private:
   double r_, vision_size, look_at, rotateSpeed, robotSpeed;
@@ -60,7 +52,7 @@ class Robot : public Object {
   void moveLeft();
   void moveRight();
 
-  NeuralNetwork* nn_;
+  NeuralNetwork nn_;
   void initNetwork();
   std::vector< double > fireNetwork();
   void initBrain();

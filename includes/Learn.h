@@ -22,7 +22,7 @@ class Learn {
 			object_.clear();
 		}
 
-		NeuralNetwork* newBrain(double percentToTake = 0.5);
+		NeuralNetwork newBrain(double percentToTake = 0.5);
 
 	private:
 		std::vector< Object* > object_;

@@ -21,10 +21,6 @@ class NeuronLayer {
     : neuron(nl.neurons())
     {}
 
-    NeuronLayer operator=(NeuronLayer nl) {
-      return NeuronLayer(nl);
-    }
-
     void random_weights(int n);
 
     void insert_neuron(Neuron);
@@ -43,6 +39,7 @@ class NeuronLayer {
     }
 
     int size() { return neuron.size(); }
+    void clear() { neuron.clear(); }
 
     std::vector<Neuron> neurons() { return neuron; }
     std::vector<Neuron> neurons() const { return neuron; }

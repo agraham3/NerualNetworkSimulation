@@ -28,8 +28,7 @@ class Object {
     virtual int& score() {}
     virtual int& energy() {}
     virtual double visionSize() {}
-    virtual NeuralNetwork* brain() {}
-    virtual void setBrain(NeuralNetwork*) {}
+    virtual NeuralNetwork& brain() {}
 
     // bullet
     virtual Object* whoShotMe() {}

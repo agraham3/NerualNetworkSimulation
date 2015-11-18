@@ -50,13 +50,13 @@ void Robot::handleAction(std::vector<double> act) {
   // shoot
   if (act[6] >= 0.5) {
     shoot();    
-    energy_ -= 10;
+    energy_ -= 5;
   }
 }
 
 bool Robot::execute() {
-  nn_->load(robotInfo());
-  std::vector< double > output = nn_->fire();
+  nn_.load(robotInfo());
+  std::vector< double > output = nn_.fire();
   handleAction(output);  
 
   framesLived_ += 1;
@@ -86,6 +86,7 @@ std::vector< Vec2f > Robot::radar() {
       if (within) {
         Vec2f pos = list[i]->getpos();
         v.push_back(pos);
+        score_ += 2;                  // give points for having objects within the radar
       }
     }
   }
@@ -171,13 +172,13 @@ void Robot::draw() {
 }
 
 void Robot::initBrain() {
-  nn_->create_layer(LAYER_ZERO_SIZE);
-  nn_->create_layer(8);
-  nn_->create_layer(5);
-  nn_->create_layer(5);
-  nn_->create_layer(8);
-  nn_->create_layer(10);
-  nn_->create_layer(10);
-  nn_->create_layer(5);
-  nn_->create_layer(NUMBER_ROBOT_ACTIONS);                    // last layer: size = number of actions
+  nn_.create_layer(LAYER_ZERO_SIZE);
+  nn_.create_layer(8);
+  nn_.create_layer(5);
+  nn_.create_layer(5);
+  nn_.create_layer(8);
+  nn_.create_layer(10);
+  nn_.create_layer(10);
+  nn_.create_layer(5);
+  nn_.create_layer(NUMBER_ROBOT_ACTIONS);                    // last layer: size = number of actions
 }

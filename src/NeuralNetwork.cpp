@@ -48,3 +48,20 @@ std::vector< double > NeuralNetwork::fire() {
 
   return output;
 }
+
+void NeuralNetwork::swap(int x, int y) {
+  if (x == 0 || y == 0) {
+    std::cout << "Do not move the 1st layer." << std::endl;
+    throw SwapError();
+  }
+
+  int lastLayer = layer.size() - 1;
+  if (x == lastLayer || y == lastLayer) {
+    std::cout << "Do not move the last layer." << std::endl;
+    throw SwapError();
+  }
+
+  NeuronLayer t = layer[x];
+  layer[x] = layer[y];
+  layer[y] = t;
+}

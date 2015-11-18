@@ -43,16 +43,16 @@ void Learn::bestTwo() {
 	o2 = pos2;
 }
 
-NeuralNetwork* Learn::newBrain(double percentToTake) {
+NeuralNetwork Learn::newBrain(double percentToTake) {
 	if (percentToTake > 1)
 		throw OverOneHunderedPercent();
 
 	bestTwo();			    // find the best two robots: This sets o1, o2
 											// 			where o1 is the best robot stored as a pos in object_ and
 											//  		o2 is the second best robot stored as a pos in object_
-	NeuralNetwork brain1 = *object_[o1]->brain(),
-								brain2 = *object_[o2]->brain();
-	NeuralNetwork* newBrain = new NeuralNetwork(brain2);
+	NeuralNetwork brain1 = object_[o1]->brain(),
+								brain2 = object_[o2]->brain();
+	NeuralNetwork newBrain = NeuralNetwork(brain2);
 
 	// Make random brains based off: brain1, brain2
 
@@ -73,7 +73,7 @@ NeuralNetwork* Learn::newBrain(double percentToTake) {
 
 	// Give brain2 a percent "percentToTake" of brain1
 	for (int i = 0; i < layerPositions.size(); ++i)
-		newBrain->replace(i, brain1.get_layer(layerPositions[i]));
+		newBrain.replace(layerPositions[i], brain1.get_layer(layerPositions[i]));
 
 	return newBrain;
 }

@@ -65,29 +65,35 @@ void GameManager::createRobot(bool useLearning) {
   Object * robot = AbstractFactory::createRobot(x, y, .05, r, g, b);
 
   if (useLearning)
-    robot->setBrain(manager_->learn().newBrain(0.60));
+    robot->brain() = manager_->learn().newBrain(0.60);
 
-  if (robot->brain()->size() == 0)
+  int brainSize = robot->brain().size();
+  if (brainSize == 0)
     throw NoBrain();
+
+  // Morph the robots brain.
+  //   Change:  Layer swaps.                        (Do not change 1st or last layer)
+  //            Change number of nuerons in a layer (Do not have 0 neurons in a layer)
+  int check = rand() % 10;
+  if (check > 8) {
+    std::cout << "Changing a robot's brain. " << std::endl;
+    int a = 0, b = 0;
+    while(a == 0 || a >= brainSize - 1 ||
+          b == 0 || b >= brainSize - 1 ||
+          a == b) {
+        a = rand() % brainSize + 1;
+        b = rand() % brainSize + 1;
+    }
+    std::cout << "    Swaping layer #: " << a + 1 << ", " << b + 1 << std::endl;
+    //robot->brain()->swap(a, b);
+  }
 
   manager_->insert(robot);
 }
 
 void GameManager::createRobots(bool useLearning, int generationNumber) {
-  // randomaly add: dumb robots
-  //                brain layer swaps
   for (int i = 0; i < NUM_ROBOTS; ++i) {
-    int x = rand() % 10;
-    if (x > 8 && generationNumber != 0) {
-      std::cout << "Adding a dumb robot" << std::endl;
-      createRobot(!useLearning);
-    }
-    else {
-      // if (x < 2 && generationNumber != 0) { 
-      //   do a brain layer swap 
-      // }
-      createRobot(useLearning);
-    }
+    createRobot(useLearning);
   }
 }
 

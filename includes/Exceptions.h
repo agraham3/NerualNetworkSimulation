@@ -1,11 +1,15 @@
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 
-class SizeError {};
+// Brain Errors
 class NetworkNotLoaded {};
 class NoLayerZero {};
-class OverOneHunderedPercent {};
 class NotARobot {};
 class NoBrain {};
+class SwapError {};
+
+// Other
+class SizeError {};
+class OverOneHunderedPercent {};
 
 #endif

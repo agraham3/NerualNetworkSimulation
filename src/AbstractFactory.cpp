@@ -9,7 +9,7 @@ Object* AbstractFactory::createRobot(double x, double y, double rad,
 Object* AbstractFactory::createRobot(Object* o) {
 	Vec2f pos = o->getpos();
 	Robot * r = new Robot(pos.x(), pos.y(), o->red(), o->green(), o->blue());
-	r->setBrain(o->brain());
+	r->brain() = o->brain();
 	r->score() = o->score();
 	r->framesLived() = o->framesLived();
 	return r;

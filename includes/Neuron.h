@@ -1,6 +1,7 @@
 #ifndef NEURON_H
 #define NEURON_H
 
+#include <iostream>
 #include <vector>
 #include "Functions.h"
 
@@ -10,10 +11,6 @@ class Neuron {
    Neuron(const Neuron & n)
    : weights(n.getWeights()), inputs(n.getInputs())
    {}
-
-  Neuron operator=(Neuron n) {
-    return Neuron(n);
-  }
 
   std::vector< double > getWeights() const { return weights; }
   std::vector< double > getInputs() const { return inputs; }
@@ -34,5 +31,12 @@ class Neuron {
   std::vector< double > weights;
   std::vector< double > inputs;
 };
+
+inline
+std::ostream & operator<<(std::ostream & cout, const Neuron & neuron)
+{
+  cout << "<Neuron " << neuron.getWeights()[0] << '>';
+  return cout;
+}
 
 #endif
