@@ -27,8 +27,8 @@ class NeuralNetwork {
 
     void set(std::vector<NeuronLayer> v) { layer = v; }
     void replace(int layerNumber, NeuronLayer l) { layer[layerNumber] = l; }
-    
-    void swap(int, int);
+
+    void randomWeightChange();
 
   private:
   	std::vector< NeuronLayer > layer;

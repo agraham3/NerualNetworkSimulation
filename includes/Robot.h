@@ -24,8 +24,9 @@ class Robot : public Object {
   std::string id() { return "robot"; }
   bool execute();
   void handleAction(std::vector<double>);
+  Vec2f speed() { return Vec2f(robotSpeed, robotSpeed); }
 
-  std::vector< Vec2f > radar();
+  std::vector< Object* > radar();
 
   void draw();
 

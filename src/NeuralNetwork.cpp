@@ -4,10 +4,9 @@
 
 void NeuralNetwork::create_layer(const int & n) {
   layer.push_back(NeuronLayer());
-  int end = layer.size()-1;
-  for (int i = 0; i < n; ++i){
+  int end = layer.size() - 1;
+  for (int i = 0; i < n; ++i)
     layer[end].insert_neuron(Neuron());
-  }
 
   if (end != 0)
     layer[end].random_weights(layer[end-1].size());
@@ -16,9 +15,8 @@ void NeuralNetwork::create_layer(const int & n) {
 }
 
 void NeuralNetwork::load(const std::vector< double > & input) {
-  for (int i = 0; i < input.size(); ++i) {
+  for (int i = 0; i < input.size(); ++i)
     layer[0].insert_value(input[i], i);
-  }
 
   int dif = layer[0].size() - input.size();
   if (dif != 0) {
@@ -49,19 +47,10 @@ std::vector< double > NeuralNetwork::fire() {
   return output;
 }
 
-void NeuralNetwork::swap(int x, int y) {
-  if (x == 0 || y == 0) {
-    std::cout << "Do not move the 1st layer." << std::endl;
-    throw SwapError();
-  }
-
-  int lastLayer = layer.size() - 1;
-  if (x == lastLayer || y == lastLayer) {
-    std::cout << "Do not move the last layer." << std::endl;
-    throw SwapError();
-  }
-
-  NeuronLayer t = layer[x];
-  layer[x] = layer[y];
-  layer[y] = t;
+void NeuralNetwork::randomWeightChange() {
+  int randomLayer  = rand() % layer.size();
+  int randomNeuron = rand() % layer[randomLayer].size();
+  int randomWeight = rand() % layer[randomLayer].neurons().size();
+  int c = (rand() % 2 == 0 ? 0.1 : -0.1);
+  layer[randomLayer].neurons()[randomNeuron].getWeight(randomWeight) += randomWeight * c;
 }

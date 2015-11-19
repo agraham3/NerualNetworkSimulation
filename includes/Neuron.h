@@ -15,9 +15,9 @@ class Neuron {
   std::vector< double > getWeights() const { return weights; }
   std::vector< double > getInputs() const { return inputs; }
 
-   // the purpose of this function is to sum up all the
-   // weights * x
-   // Note: this is essentially:
+   // The purpose of this function is to sum up all the
+   //   weights * x
+   // Note: This is essentially:
    //   weights vector (dot product) x vector
    double fire();
 
@@ -26,6 +26,7 @@ class Neuron {
    void clear();
 
    void setWeight(const double value, const int pos) { weights[pos] = value; }
+   double& getWeight(const int n) { weights[n]; }
 
  private:
   std::vector< double > weights;

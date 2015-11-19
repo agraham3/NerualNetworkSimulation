@@ -71,21 +71,11 @@ void GameManager::createRobot(bool useLearning) {
   if (brainSize == 0)
     throw NoBrain();
 
-  // Morph the robots brain.
-  //   Change:  Layer swaps.                        (Do not change 1st or last layer)
-  //            Change number of nuerons in a layer (Do not have 0 neurons in a layer)
+  // Mutate the robots brain.
   int check = rand() % 10;
   if (check > 8) {
-    std::cout << "Changing a robot's brain. " << std::endl;
-    int a = 0, b = 0;
-    while(a == 0 || a >= brainSize - 1 ||
-          b == 0 || b >= brainSize - 1 ||
-          a == b) {
-        a = rand() % brainSize + 1;
-        b = rand() % brainSize + 1;
-    }
-    std::cout << "    Swaping layer #: " << a + 1 << ", " << b + 1 << std::endl;
-    //robot->brain()->swap(a, b);
+    std::cout << "Mutate a robots brain." << std::endl;
+    robot->brain().randomWeightChange();
   }
 
   manager_->insert(robot);

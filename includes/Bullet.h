@@ -14,7 +14,10 @@ class Bullet : public Object {
 
   bool execute();
   std::string id() { return "bullet"; }
+
   void setdir(Vec2f);
+
+
   bool move();
   void draw();
 
@@ -22,6 +25,7 @@ class Bullet : public Object {
 
   Object* whoShotMe() { return whoShotMe_; }
   void setWhoShotMe(Object* o) { whoShotMe_ = o; }
+  Vec2f speed() { return dir; }
 
  private:
   double r_;

@@ -14,7 +14,7 @@ const int FRAMES_PER_SEC = 20;
 //    so 5 * 2 = 10
 const int ROBOT_INFO_NUM = 7;
 const int NUM_RADAR_CAN_SEE = 5;
-const int LAYER_ZERO_SIZE = ROBOT_INFO_NUM + NUM_RADAR_CAN_SEE * 2;
+const int LAYER_ZERO_SIZE = ROBOT_INFO_NUM + NUM_RADAR_CAN_SEE * 5;
 
 const int NUM_ROBOTS = 6;
 const int NUMBER_ROBOT_ACTIONS = 7;

@@ -1,8 +1,8 @@
+#include <cmath>
+#include <cstdlib>
 #include "Robot.h"
 #include "Functions.h"
 #include "AbstractFactory.h"
-#include <cmath>
-#include <cstdlib>
 #include "Config.h"
 
 std::vector< double > Robot::robotInfo() {
@@ -18,14 +18,22 @@ std::vector< double > Robot::robotInfo() {
   info.push_back(numBullets_);
 
   // push x, y from radar
-  std::vector< Vec2f > list = radar();
+  std::vector< Object* > list = radar();
   int numrad = list.size();
   if (numrad > NUM_RADAR_CAN_SEE)
     numrad = NUM_RADAR_CAN_SEE;
   for(int i = 0; i < numrad; ++i) {
-    info.push_back(list[i].x()); 
-    info.push_back(list[i].y());
+    Vec2f pos = list[i]->getpos();
+    info.push_back(pos.x()); 
+    info.push_back(pos.y());
+
+    info.push_back(list[i]->radius());
+
+    Vec2f speed = list[i]->speed();
+    info.push_back(speed.x());
+    info.push_back(speed.y());
   }
+
   return info;
 }
 
@@ -67,8 +75,8 @@ bool Robot::execute() {
   return true;
 }
 
-std::vector< Vec2f > Robot::radar() {
-  std::vector< Vec2f > v;
+std::vector< Object* > Robot::radar() {
+  std::vector< Object* > v;
   ObjectManager * manager = ObjectManager::getInstance();
   std::vector< Object* > list = manager->getList();
   if (list.size() == 0)
@@ -84,8 +92,7 @@ std::vector< Vec2f > Robot::radar() {
       bool useVisionRadius = true;
       bool within = circleCollisionCheck(this, list[i], useVisionRadius);
       if (within) {
-        Vec2f pos = list[i]->getpos();
-        v.push_back(pos);
+        v.push_back(list[i]);
         score_ += 5;                  // give points for having objects within the radar
       }
     }
@@ -175,10 +182,9 @@ void Robot::initBrain() {
   nn_.create_layer(LAYER_ZERO_SIZE);
   nn_.create_layer(8);
   nn_.create_layer(5);
-  nn_.create_layer(5);
   nn_.create_layer(8);
   nn_.create_layer(10);
-  nn_.create_layer(10);
-  nn_.create_layer(5);
+  nn_.create_layer(12);
+  nn_.create_layer(7);
   nn_.create_layer(NUMBER_ROBOT_ACTIONS);                    // last layer: size = number of actions
 }

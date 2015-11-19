@@ -22,6 +22,8 @@ class Object {
     virtual double green() { return g; }
     virtual double blue() { return b; }
     virtual double radius() {}
+    virtual Vec2f speed() {}
+
     virtual int& framesLived() {}
 
     // robot

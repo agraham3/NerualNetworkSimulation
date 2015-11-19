@@ -41,7 +41,7 @@ class NeuronLayer {
     int size() { return neuron.size(); }
     void clear() { neuron.clear(); }
 
-    std::vector<Neuron> neurons() { return neuron; }
+    std::vector<Neuron>& neurons() { return neuron; }
     std::vector<Neuron> neurons() const { return neuron; }
 
   private:
