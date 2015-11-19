@@ -23,7 +23,7 @@ std::vector< double > NeuronLayer::fire() {
 void NeuronLayer::random_weights(int n) {
   for (int i = 0; i < neuron.size(); ++i) {
     for (int ww = 0; ww < n; ++ww) {
-      int w = rand() % 21 - 10;       // rand weight: [-10, 10]
+      int w = rand() % 41 - 20;       // rand weight: [-20, 20]
       neuron[i].insertw(w);
     }
   } 

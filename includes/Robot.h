@@ -14,7 +14,7 @@ class Robot : public Object {
  Robot(double x, double y, double rad,
        double red = 0, double green = 0, double blue = 0)
    : Object(x, y, red, green, blue), r_(rad), 
-     vision_size(.4), look_at(PI/2), rotateSpeed(PI/16),
+     vision_size(.55), look_at(PI/2), rotateSpeed(PI/16),
      robotSpeed(.01), bulletSpeed(Vec2f(.05,.05)),
      score_(0), framesLived_(0), energy_(ROBOT_ENERGY), numBullets_(NUM_ROBOT_BULLETS)
   {

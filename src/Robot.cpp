@@ -86,7 +86,7 @@ std::vector< Vec2f > Robot::radar() {
       if (within) {
         Vec2f pos = list[i]->getpos();
         v.push_back(pos);
-        score_ += 2;                  // give points for having objects within the radar
+        score_ += 5;                  // give points for having objects within the radar
       }
     }
   }

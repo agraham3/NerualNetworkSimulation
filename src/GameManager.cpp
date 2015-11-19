@@ -93,7 +93,13 @@ void GameManager::createRobot(bool useLearning) {
 
 void GameManager::createRobots(bool useLearning, int generationNumber) {
   for (int i = 0; i < NUM_ROBOTS; ++i) {
-    createRobot(useLearning);
+    int check = rand() % 10;
+    if (check > 8 && generationNumber != 0) {
+      std::cout << "Creating a dumb robot" << std::endl;
+      createRobot(!useLearning);
+    }
+    else
+      createRobot(useLearning);
   }
 }
 

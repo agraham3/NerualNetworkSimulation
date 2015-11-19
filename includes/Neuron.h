@@ -33,8 +33,7 @@ class Neuron {
 };
 
 inline
-std::ostream & operator<<(std::ostream & cout, const Neuron & neuron)
-{
+std::ostream & operator<<(std::ostream & cout, const Neuron & neuron) {
   cout << "<Neuron " << neuron.getWeights()[0] << '>';
   return cout;
 }

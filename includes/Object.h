@@ -41,7 +41,7 @@ class Object {
 };
 
 inline
-bool circleCollisionCheck(Object* a, Object* b, bool vision = false) {
+bool circleCollisionCheck(Object* a, Object* b, bool useVision) {
   Vec2f apos = a->getpos();
   Vec2f bpos = b->getpos();
 
@@ -49,9 +49,8 @@ bool circleCollisionCheck(Object* a, Object* b, bool vision = false) {
          dy   = apos.y() - bpos.y(),
          dist = sqrt(dx*dx + dy*dy);
 
-  if (vision) {
+  if (useVision)
     return (dist < a->visionSize() + b->radius());
-  }
 
   return (dist < (a->radius() + b->radius()));
 }
