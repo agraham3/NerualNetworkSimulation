@@ -11,12 +11,12 @@ void Learn::insert(Object* r) {
 
 int Learn::score(int pos) {
 	int points = 0;
-	points += object_[pos]->score() * POINT_BOOSTER;
+	points += object_[pos]->score();
 	points += object_[pos]->framesLived();
 	return points;
 }
 
-void Learn::bestTwo() {
+bool Learn::bestTwo() {
 	int pos1 = 0,
 			pos2 = 0,
 			pts1 = 0,
@@ -41,18 +41,29 @@ void Learn::bestTwo() {
 	//    o2 is the second best robot
 	o1 = pos1; 
 	o2 = pos2;
+
+	if (pts1 > bestScore) {
+		bestScore = pts1;
+		bestBrain = object_[o1]->brain();
+		return true;
+	}
+
+	return false;
 }
 
 NeuralNetwork Learn::newBrain(double percentToTake) {
 	if (percentToTake > 1)
 		throw OverOneHunderedPercent();
 
-	bestTwo();			    // find the best two robots: This sets o1, o2
-											// 			where o1 is the best robot stored as a pos in object_ and
-											//  		o2 is the second best robot stored as a pos in object_
+	bool newBest = bestTwo();		// find the best two robots: This sets o1, o2
+															// 			where o1 is the best robot stored as a pos in object_ and
+															//  		o2 is the second best robot stored as a pos in object_
 	NeuralNetwork brain1 = object_[o1]->brain(),
 								brain2 = object_[o2]->brain();
 	NeuralNetwork newBrain = NeuralNetwork(brain2);
+
+	if (!newBest)
+		brain1 = bestBrain;
 
 	// Make random brains based off: brain1, brain2
 

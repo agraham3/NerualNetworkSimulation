@@ -23,7 +23,7 @@ class Robot : public Object {
 
   std::string id() { return "robot"; }
   bool execute();
-  void handleAction(std::vector<double>);
+  bool handleAction(std::vector<double>);
   Vec2f speed() { return Vec2f(robotSpeed, robotSpeed); }
 
   std::vector< Object* > radar();
@@ -48,10 +48,10 @@ class Robot : public Object {
   void shoot();
   void rotateLeft();
   void rotateRight();
-  void moveUp();
-  void moveDown();
-  void moveLeft();
-  void moveRight();
+  bool moveUp();
+  bool moveDown();
+  bool moveLeft();
+  bool moveRight();
 
   NeuralNetwork nn_;
   void initNetwork();

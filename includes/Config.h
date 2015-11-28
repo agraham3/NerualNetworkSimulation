@@ -16,9 +16,9 @@ const int ROBOT_INFO_NUM = 7;
 const int NUM_RADAR_CAN_SEE = 5;
 const int LAYER_ZERO_SIZE = ROBOT_INFO_NUM + NUM_RADAR_CAN_SEE * 5;
 
-const int NUM_ROBOTS = 6;
+const int NUM_ROBOTS = 4;
 const int NUMBER_ROBOT_ACTIONS = 7;
-const int ROBOT_ENERGY = 350;
+const int ROBOT_ENERGY = 400;
 const int NUM_ROBOT_BULLETS = 5;
 
 // Math const
@@ -27,6 +27,5 @@ const double TAU = 2 * PI;
 
 // other
 const int RESTART_TIMER = 50;
-const int POINT_BOOSTER = 100;
 
 #endif

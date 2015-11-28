@@ -37,20 +37,27 @@ std::vector< double > Robot::robotInfo() {
   return info;
 }
 
-void Robot::handleAction(std::vector<double> act) {
+bool Robot::handleAction(std::vector<double> act) {
   // Movement
-  if (act[0] >= 0.5 && act[0] > act[1])
-    moveUp();
+  bool moved = false, moved1 = false;
+  if (act[0] >= 0.5 && act[0] >= act[1])
+    moved = moveUp();
   else if (act[1] > 0.5)
-    moveDown();
-
-  if (act[2] >= 0.5 && act[2] > act[3])
-    moveLeft();
+    moved = moveDown();
+  if (act[2] >= 0.5 && act[2] >= act[3])
+    moved1 = moveLeft();
   else if (act[3] >= 0.5)
-    moveRight();
+    moved1 = moveRight();
+
+  if (moved || moved1)
+    score_ -= 100;
+
+  if ((act[0] >= 0.5 || act[1] >= 0.5 ||
+      act[2] >= 0.5 || act[3] >= 0.5) && !moved && !moved1)
+    return true;
 
   // Rotation
-  if (act[4] >= 0.5 && act[4] > act[5])
+  if (act[4] >= 0.5 && act[4] >= act[5])
     rotateLeft();
   else if (act[5] >= 0.5)
     rotateRight();
@@ -60,12 +67,19 @@ void Robot::handleAction(std::vector<double> act) {
     shoot();    
     energy_ -= 5;
   }
+
+  return false;
 }
 
 bool Robot::execute() {
   nn_.load(robotInfo());
   std::vector< double > output = nn_.fire();
-  handleAction(output);  
+  bool hitWall = handleAction(output);
+
+  if (hitWall) {
+    score_ -= 100;
+    return false;
+  }
 
   framesLived_ += 1;
   energy_ -= 1;
@@ -93,7 +107,7 @@ std::vector< Object* > Robot::radar() {
       bool within = circleCollisionCheck(this, list[i], useVisionRadius);
       if (within) {
         v.push_back(list[i]);
-        score_ += 5;                  // give points for having objects within the radar
+        score_ += 1;                  // give points for having objects within the radar
       }
     }
   }
@@ -117,12 +131,27 @@ void Robot::shoot() {
   Vec2f dir(a - x, b - y);
   double mag = sqrt(pow(dir.x(),2) + pow(dir.y(),2));
   dir /= Vec2f(mag, mag);
-  dir *= bulletSpeed;
+  dir *= bulletSpeed; 
 
   // create bullet
   ObjectManager * manager = ObjectManager::getInstance();
-  manager->insert(AbstractFactory::createBullet(x, y, dir, this));
+  manager->insert(AbstractFactory::createBullet(x, y, dir, this));    
   --numBullets_;
+
+
+  // give the robot points for shooting
+  // while a robot is in vision
+  bool robotFound = false;
+  std::vector<Object* > v = radar();
+  for (int i = 0; i < v.size(); ++i) {
+    if (v[i]->id() == "robot") {
+      score_ += 60;
+      robotFound = true;
+    }
+  }
+
+  if (!robotFound)
+    score_ -= 60;
 }
 
 void Robot::rotateLeft() {
@@ -133,32 +162,48 @@ void Robot::rotateRight() {
   look_at += rotateSpeed;
 }
 
-void Robot::moveUp() {
+bool Robot::moveUp() {
   Vec2f pos = Object::getpos();
   Vec2f newpos = pos + Vec2f(pos.x(), robotSpeed);
-  if (withinArena(newpos))
+  if (withinArena(newpos)) {
     Object::getpos().y() += robotSpeed;
+    return true;
+  }
+
+  return false;
 }
 
-void Robot::moveDown() {
+bool Robot::moveDown() {
   Vec2f pos = Object::getpos();
   Vec2f newpos = pos - Vec2f(pos.x(), robotSpeed);
-  if (withinArena(newpos))
+  if (withinArena(newpos)) {
     Object::getpos().y() -= robotSpeed;
+    return true;
+  }
+
+  return false;
 }
 
-void Robot::moveLeft() {
+bool Robot::moveLeft() {
   Vec2f pos = Object::getpos();
   Vec2f newpos = pos - Vec2f(robotSpeed, pos.y());
-  if (withinArena(newpos))
+  if (withinArena(newpos)) {
     Object::getpos().x() -= robotSpeed;
+    return true;
+  }
+
+  return false;
 }
 
-void Robot::moveRight() {
+bool Robot::moveRight() {
   Vec2f pos = Object::getpos();
   Vec2f newpos = pos + Vec2f(robotSpeed, pos.y());
-  if (withinArena(newpos))
+  if (withinArena(newpos)) {
     Object::getpos().x() += robotSpeed;
+    return true;
+  }
+
+  return false;
 }
 
 void Robot::draw() {
