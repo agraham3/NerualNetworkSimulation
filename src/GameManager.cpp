@@ -6,40 +6,40 @@
 
 void GameManager::checkRestart() {
   static int restartTimer = RESTART_TIMER;
-  static int generationNumber = 0;
   
   if (restartTimer == 0) {
     manager_->clear();
     restartTimer = RESTART_TIMER;
-    ++generationNumber;
 
     bool useLearning = true;
-    createRobots(useLearning, generationNumber);
+    createRobots(useLearning);
     manager_->learn().clear();
-    std::cout << "Generation Number: " << generationNumber << std::endl;
+    ++generationNumber_;
+    std::cout << "Generation Number: " << generationNumber_ << std::endl;
   }
 
   --restartTimer;
 }
 
 void GameManager::run() {
+  surface_ = singletonSDL2::getInstance();
   createRobots();
+  std::cout << "Generation Number: " << generationNumber_ << std::endl;
 
-  std::cout << "Generation Number: " << 0 << std::endl;
   while(!quitProgram_) {
     int start = SDL_GetTicks();
 
-    eventHandler();
     bool ran = manager_->execute();
-    updateScreen();
-
-    if (!ran) {
+    if (!ran)
       checkRestart();
-    }
 
-    int end = SDL_GetTicks();
-    delay(start, end);
-    ++frame_;
+    if (generationNumber_ % 100 == 0) {
+      eventHandler();
+      updateScreen();
+
+      int end = SDL_GetTicks();
+      delay(start, end);
+    }
   }
 
   surface_->close();
@@ -56,8 +56,8 @@ void GameManager::eventHandler() {
 }
 
 void GameManager::createRobot(bool useLearning) {
-  double x = ((double)rand() / RAND_MAX) * 2 - 1, 
-         y = ((double)rand() / RAND_MAX) * 2 - 1;
+  double x = ((double)rand() / RAND_MAX) - 0.5, 
+         y = ((double)rand() / RAND_MAX) - 0.5;
 
   double r = ((double)rand() / RAND_MAX) / 2,
          g = ((double)rand() / RAND_MAX) / 2,
@@ -72,7 +72,7 @@ void GameManager::createRobot(bool useLearning) {
     throw NoBrain();
 
   // Mutate the robots brain.
-  int check = rand() % 10;
+  int check = rand() % 10 + 1;
   if (check > 8) {
     std::cout << "Mutate a robots brain." << std::endl;
     robot->brain().randomWeightChange();
@@ -81,10 +81,10 @@ void GameManager::createRobot(bool useLearning) {
   manager_->insert(robot);
 }
 
-void GameManager::createRobots(bool useLearning, int generationNumber) {
+void GameManager::createRobots(bool useLearning) {
   for (int i = 0; i < NUM_ROBOTS; ++i) {
-    int check = rand() % 10;
-    if (check > 8 && generationNumber != 0) {
+    int check = rand() % 10 + 1;
+    if (check > 9 && generationNumber_ != 0) {
       std::cout << "Creating a dumb robot" << std::endl;
       createRobot(!useLearning);
     }

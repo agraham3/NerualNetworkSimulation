@@ -10,22 +10,22 @@
 class GameManager {
 public:
   GameManager()
-   : surface_(singletonSDL2::getInstance()), quitProgram_(false),
-     frame_(0), manager_(ObjectManager::getInstance())
+   : quitProgram_(false), generationNumber_(0),
+     manager_(ObjectManager::getInstance())
   {}
 
   void run();
 
 private:
   bool quitProgram_;
-  int frame_;
+  int generationNumber_;
   singletonSDL2 * surface_;
   SDL_Event event_;
   ObjectManager * manager_;
 
   void eventHandler();
   void createRobot(bool useLearning);
-  void createRobots(bool useLearning=false, int generationNumber=0);
+  void createRobots(bool useLearning=false);
   void updateScreen();
   int getDelayTime(int start, int end);
   void delay(int start, int end);

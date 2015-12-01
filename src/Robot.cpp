@@ -42,7 +42,7 @@ bool Robot::handleAction(std::vector<double> act) {
   bool moved = false, moved1 = false;
   if (act[0] >= 0.5 && act[0] >= act[1])
     moved = moveUp();
-  else if (act[1] > 0.5)
+  else if (act[1] >= 0.5)
     moved = moveDown();
   if (act[2] >= 0.5 && act[2] >= act[3])
     moved1 = moveLeft();

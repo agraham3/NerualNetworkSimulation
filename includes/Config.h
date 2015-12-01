@@ -18,7 +18,7 @@ const int LAYER_ZERO_SIZE = ROBOT_INFO_NUM + NUM_RADAR_CAN_SEE * 5;
 
 const int NUM_ROBOTS = 4;
 const int NUMBER_ROBOT_ACTIONS = 7;
-const int ROBOT_ENERGY = 400;
+const int ROBOT_ENERGY = 500;
 const int NUM_ROBOT_BULLETS = 5;
 
 // Math const
