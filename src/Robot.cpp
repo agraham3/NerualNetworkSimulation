@@ -12,8 +12,6 @@ std::vector< double > Robot::robotInfo() {
   info.push_back(pos.x());
   info.push_back(pos.y());
   info.push_back(look_at);
-  info.push_back(framesLived_);
-  info.push_back(score_);
   info.push_back(energy_);
   info.push_back(numBullets_);
   info.push_back(bulletTimer_);
@@ -40,21 +38,37 @@ std::vector< double > Robot::robotInfo() {
 
 bool Robot::handleAction(std::vector<double> act) {
   // Movement
+  std::string newDir;
   bool moved = false, moved1 = false;
-  if (act[0] >= 0.5 && act[0] >= act[1])
+  if (act[0] >= 0.5 && act[0] >= act[1]) {
     moved = moveUp();
-  else if (act[1] >= 0.5)
+    newDir += "up";
+  }
+  else if (act[1] >= 0.5) {
     moved = moveDown();
+    newDir += "down";
+  }
   
-  if (act[2] >= 0.5 && act[2] >= act[3])
+  if (act[2] >= 0.5 && act[2] >= act[3]) {
     moved1 = moveLeft();
-  else if (act[3] >= 0.5)
+    newDir += "left";
+  }
+  else if (act[3] >= 0.5) {
     moved1 = moveRight();
+    newDir += "right";
+  }
 
+  // check if moved
   if (!moved || !moved1)
     score_ -= ROBOT_DID_NOT_MOVE;
   else
     energy_ -= MOVE_ENERGY_LOSS;
+
+  // check if went a new direction
+  if (newDir == prevDir_)
+    score_ -= SAME_DIRECTION;
+  else
+    prevDir_ = newDir;
 
   // points for being away from the wall
   Vec2f pos = Object::getpos();
@@ -255,13 +269,8 @@ void Robot::draw() {
 
 void Robot::initBrain() {
   nn_.create_layer(LAYER_ZERO_SIZE);
-  nn_.create_layer(20);
-  nn_.create_layer(20);
-  nn_.create_layer(20);
-  nn_.create_layer(20);
-  nn_.create_layer(20);
-  nn_.create_layer(20);
-  nn_.create_layer(20);
-  nn_.create_layer(20);
+  nn_.create_layer(30);
+  nn_.create_layer(30);
+  nn_.create_layer(30);
   nn_.create_layer(NUMBER_ROBOT_ACTIONS);                    // last layer: size = number of actions
 }

@@ -8,7 +8,7 @@
 class Learn {
 	public:
 		Learn() 
-		:	o1(0), o2(0), bestScore(0), badBrains_(true)
+		:	o1(0), o2(0), bestScore(0), secondBestScore(0), badBrains_(true)
 		{}
 		~Learn() {
 			clear();	
@@ -29,8 +29,8 @@ class Learn {
 	private:
 		std::vector< Object* > object_;
 		int o1, o2;										// best two robot positions in robot_
-		int bestScore;
-		NeuralNetwork bestBrain;
+		int bestScore, secondBestScore;
+		NeuralNetwork bestBrain, secondBestBrain;
 		bool badBrains_;
 
 		int score(int pos);

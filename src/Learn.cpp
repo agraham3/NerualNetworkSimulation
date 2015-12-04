@@ -48,6 +48,9 @@ bool Learn::bestTwo() {
 	o2 = pos2;
 
 	if (pts1 > bestScore) {
+		secondBestScore = bestScore;
+		secondBestBrain = bestBrain;
+
 		bestScore = pts1;
 		bestBrain = object_[o1]->brain();
 		return true;
@@ -67,8 +70,10 @@ NeuralNetwork Learn::newBrain(double percentToTake) {
 								brain2 = object_[o2]->brain();
 	NeuralNetwork newBrain = NeuralNetwork(brain2);
 
-	if (!newBest)
+	if (!newBest) {
 		brain1 = bestBrain;
+		brain2 = secondBestBrain;
+	}
 
 	// Make random brains based off: brain1, brain2
 

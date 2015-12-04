@@ -22,7 +22,7 @@ void NeuralNetwork::load(const std::vector< double > & input) {
   if (dif != 0) {
     for (int i = 0; i < dif; ++i) {
       int pos = input.size() + i;
-      layer[0].insert_value(0, pos); 
+      layer[0].insert_value(1, pos); 
     }
   }
 }
