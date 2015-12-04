@@ -8,7 +8,7 @@
 class Learn {
 	public:
 		Learn() 
-		:	o1(0), o2(0), bestScore(0)
+		:	o1(0), o2(0), bestScore(0), badBrains_(true)
 		{}
 		~Learn() {
 			clear();	
@@ -22,6 +22,8 @@ class Learn {
 			object_.clear();
 		}
 
+		int getScore() { return bestScore; }
+		bool badBrains() { return badBrains_; }
 		NeuralNetwork newBrain(double percentToTake = 0.5);
 
 	private:
@@ -29,6 +31,7 @@ class Learn {
 		int o1, o2;										// best two robot positions in robot_
 		int bestScore;
 		NeuralNetwork bestBrain;
+		bool badBrains_;
 
 		int score(int pos);
 		bool bestTwo();

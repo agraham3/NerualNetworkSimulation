@@ -51,6 +51,6 @@ void NeuralNetwork::randomWeightChange() {
   int randomLayer  = rand() % layer.size();
   int randomNeuron = rand() % layer[randomLayer].size();
   int randomWeight = rand() % layer[randomLayer].neurons().size();
-  int c = (rand() % 2 == 0 ? 0.1 : -0.1);
-  layer[randomLayer].neurons()[randomNeuron].getWeight(randomWeight) += randomWeight * c;
+  double c = (rand() % 2 == 0 ? 1.05 : -1.05);
+  double n = layer[randomLayer].neurons()[randomNeuron][randomWeight] * c;
 }

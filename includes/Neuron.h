@@ -26,7 +26,7 @@ class Neuron {
    void clear();
 
    void setWeight(const double value, const int pos) { weights[pos] = value; }
-   double& getWeight(const int n) { weights[n]; }
+   double& operator[](int n) { weights[n]; }
 
  private:
   std::vector< double > weights;

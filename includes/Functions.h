@@ -11,6 +11,7 @@ bool withinArena(Vec2f);
 
 // Math
 void cartesian(double & x, double & y, double r, double theta);
+bool lookingAt(double theta, Vec2f robot, Vec2f enemy);
 double sigmoid(double);
 double dotProduct(std::vector< double > a, std::vector< double > b);
 

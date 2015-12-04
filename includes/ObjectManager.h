@@ -28,6 +28,9 @@ class ObjectManager {
   void clear();
   bool execute();
   void draw();
+  int size() { return list.size(); }
+
+  Object* getObject(int n) { return list[n]; }
 
   std::vector< Object* > getList() const { return list; }
   Learn& learn() { return learn_; }

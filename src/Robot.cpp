@@ -1,9 +1,9 @@
 #include <cmath>
 #include <cstdlib>
+#include "Config.h"
 #include "Robot.h"
 #include "Functions.h"
 #include "AbstractFactory.h"
-#include "Config.h"
 
 std::vector< double > Robot::robotInfo() {
   Vec2f pos = Object::getpos();
@@ -16,6 +16,7 @@ std::vector< double > Robot::robotInfo() {
   info.push_back(score_);
   info.push_back(energy_);
   info.push_back(numBullets_);
+  info.push_back(bulletTimer_);
 
   // push x, y from radar
   std::vector< Object* > list = radar();
@@ -44,29 +45,49 @@ bool Robot::handleAction(std::vector<double> act) {
     moved = moveUp();
   else if (act[1] >= 0.5)
     moved = moveDown();
+  
   if (act[2] >= 0.5 && act[2] >= act[3])
     moved1 = moveLeft();
   else if (act[3] >= 0.5)
     moved1 = moveRight();
 
-  if (moved || moved1)
-    score_ -= 100;
+  if (!moved || !moved1)
+    score_ -= ROBOT_DID_NOT_MOVE;
+  else
+    energy_ -= MOVE_ENERGY_LOSS;
+
+  // points for being away from the wall
+  Vec2f pos = Object::getpos();
+  double x = sqrt(pos.x() * pos.x() + pos.y() * pos.y());
+  if (x <= 0.3)
+    score_ += NEAR_CENTER;
 
   if ((act[0] >= 0.5 || act[1] >= 0.5 ||
-      act[2] >= 0.5 || act[3] >= 0.5) && !moved && !moved1)
+       act[2] >= 0.5 || act[3] >= 0.5) && !moved && !moved1)
     return true;
 
   // Rotation
-  if (act[4] >= 0.5 && act[4] >= act[5])
+  bool rotated = false;
+  if (act[4] >= 0.5 && act[4] >= act[5]) {
     rotateLeft();
-  else if (act[5] >= 0.5)
+    rotated = true;
+  }
+  else if (act[5] >= 0.5) {
     rotateRight();
+    rotated = true;
+  }
+
+  if (rotated)
+    energy_ -= ROTATE_ENERGY_LOSS;
 
   // shoot
-  if (act[6] >= 0.5) {
+  if (act[6] >= 0.5 && bulletTimer_ == 0) {
     shoot();    
-    energy_ -= 5;
+    energy_ -= BULLET_COST;
+    bulletTimer_ = BULLET_TIMER;
   }
+  else
+    --bulletTimer_;
 
   return false;
 }
@@ -77,12 +98,13 @@ bool Robot::execute() {
   bool hitWall = handleAction(output);
 
   if (hitWall) {
-    score_ -= 100;
+    score_ -= ROBOT_HIT_WALL;
     return false;
   }
 
   framesLived_ += 1;
-  energy_ -= 1;
+  energy_ -= STANDARD_ENERGY_LOSS;
+
   if (energy_ < 0)
     return false;
   
@@ -107,7 +129,12 @@ std::vector< Object* > Robot::radar() {
       bool within = circleCollisionCheck(this, list[i], useVisionRadius);
       if (within) {
         v.push_back(list[i]);
-        score_ += 1;                  // give points for having objects within the radar
+        score_ += RADAR_SEE_OBJECTS;                  // give points for having objects within the radar
+
+        if (list[i]->id() == "robot") {
+          if (lookingAt(look_at, Object::getpos(), list[i]->getpos()))
+            score_ += LOOKING_NEAR_ROBOT;
+        }
       }
     }
   }
@@ -119,6 +146,8 @@ void Robot::shoot() {
   if (numBullets_ == 0)
     return;
 
+  score_ -= SHOOTING_POINT_LOSS;
+
   // get robots position
   Vec2f pos = Object::getpos();
   double x = pos.x(), y = pos.y();
@@ -129,7 +158,7 @@ void Robot::shoot() {
 
   // unit vector * speed vector
   Vec2f dir(a - x, b - y);
-  double mag = sqrt(pow(dir.x(),2) + pow(dir.y(),2));
+  double mag = sqrt(pow(dir.x(), 2) + pow(dir.y(), 2));
   dir /= Vec2f(mag, mag);
   dir *= bulletSpeed; 
 
@@ -145,13 +174,14 @@ void Robot::shoot() {
   std::vector<Object* > v = radar();
   for (int i = 0; i < v.size(); ++i) {
     if (v[i]->id() == "robot") {
-      score_ += 60;
       robotFound = true;
+      if (lookingAt(look_at, Object::getpos(), v[i]->getpos()))
+        score_ += SHOOT_NEAR_ROBOT;
     }
   }
 
   if (!robotFound)
-    score_ -= 60;
+    score_ -= RADAR_SHOOT_NO_ROBOT;
 }
 
 void Robot::rotateLeft() {
@@ -225,11 +255,13 @@ void Robot::draw() {
 
 void Robot::initBrain() {
   nn_.create_layer(LAYER_ZERO_SIZE);
-  nn_.create_layer(8);
-  nn_.create_layer(5);
-  nn_.create_layer(8);
-  nn_.create_layer(10);
-  nn_.create_layer(12);
-  nn_.create_layer(7);
+  nn_.create_layer(20);
+  nn_.create_layer(20);
+  nn_.create_layer(20);
+  nn_.create_layer(20);
+  nn_.create_layer(20);
+  nn_.create_layer(20);
+  nn_.create_layer(20);
+  nn_.create_layer(20);
   nn_.create_layer(NUMBER_ROBOT_ACTIONS);                    // last layer: size = number of actions
 }

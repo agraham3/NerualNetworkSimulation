@@ -19,8 +19,8 @@ int Learn::score(int pos) {
 bool Learn::bestTwo() {
 	int pos1 = 0,
 			pos2 = 0,
-			pts1 = 0,
-			pts2 = 0;
+			pts1 = -99999,
+			pts2 = -99999;
 
 	// Find the best two robots
 	for (int i = 0; i < object_.size(); ++i) {
@@ -35,6 +35,11 @@ bool Learn::bestTwo() {
 			pos1 = i;
 		}
 	}
+
+	if (pts1 >= 0)
+		badBrains_ = false;
+	else
+		badBrains_ = true;
 
 	// set o1, o2 as the positions in object_
 	// 		where o1 is the best robot and

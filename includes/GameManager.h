@@ -22,6 +22,7 @@ private:
   singletonSDL2 * surface_;
   SDL_Event event_;
   ObjectManager * manager_;
+  std::vector< Vec2f > positions_;
 
   void eventHandler();
   void createRobot(bool useLearning);
@@ -30,6 +31,8 @@ private:
   int getDelayTime(int start, int end);
   void delay(int start, int end);
   void checkRestart();
+  bool checkPointExitsOrNear(double x, double y, double rad);
+
 };
 
 #endif

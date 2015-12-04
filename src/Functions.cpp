@@ -14,6 +14,14 @@ bool withinArena(Vec2f d) {
   return true;
 }
 
+bool lookingAt(double theta, Vec2f robot, Vec2f enemy) {
+  double dx = robot.x() - enemy.x(),
+         dy = robot.y() - enemy.y();
+  double r = sqrt(dx*dx + dy*dy);
+  double phi = acos((robot.x() - enemy.x()) / r);
+  return (phi - SEE_GAP <= theta <= phi + SEE_GAP);
+}
+
 void cartesian(double & x, double & y, double r, double theta) {
   x = r * cos(theta) + x;
   y = r * sin(theta) + y;
