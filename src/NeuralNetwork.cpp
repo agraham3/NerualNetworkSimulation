@@ -50,7 +50,7 @@ std::vector< double > NeuralNetwork::fire() {
 void NeuralNetwork::randomWeightChange() {
   int randomLayer  = rand() % layer.size();
   int randomNeuron = rand() % layer[randomLayer].size();
-  int randomWeight = rand() % layer[randomLayer].neurons().size();
+  int randomWeight = rand() % layer[randomLayer].neurons()[randomNeuron].getWeights().size();
   double c = (rand() % 2 == 0 ? 1.05 : -1.05);
   double n = layer[randomLayer].neurons()[randomNeuron][randomWeight] * c;
 }

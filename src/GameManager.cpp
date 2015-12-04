@@ -131,7 +131,7 @@ void GameManager::createRobot(bool useLearning) {
   // Mutate the robots brain.
   int check = rand() % 10 + 1;
   if (check > 6) {
-    std::cout << "Mutate a robots brain." << std::endl;
+    //std::cout << "Mutate a robots brain." << std::endl;
     robot->brain().randomWeightChange();
   }
 
@@ -142,7 +142,7 @@ void GameManager::createRobots(bool useLearning) {
   for (int i = 0; i < NUM_ROBOTS; ++i) {
     int check = rand() % 30 + 1;
     if (check > 28 && generationNumber_ != 0) {
-      std::cout << "Creating a dumb robot" << std::endl;
+      //std::cout << "Creating a dumb robot" << std::endl;
       createRobot(!useLearning);
     }
     else
