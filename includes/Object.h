@@ -17,13 +17,13 @@ class Object {
     virtual void draw() {}
 
     virtual std::string id() {}
-    virtual Vec2f & getpos() { return pos; }
     virtual double red() { return r; }
     virtual double green() { return g; }
     virtual double blue() { return b; }
+
+    virtual Vec2f& getpos() { return pos; }
     virtual double radius() {}
     virtual Vec2f speed() {}
-
     virtual int& framesLived() {}
 
     // robot

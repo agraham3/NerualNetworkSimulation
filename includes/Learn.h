@@ -21,10 +21,14 @@ class Learn {
 
 			object_.clear();
 		}
+		int size() { return object_.size(); }
 
 		int getScore() { return bestScore; }
 		bool badBrains() { return badBrains_; }
 		NeuralNetwork newBrain(double percentToTake = 0.5);
+
+		NeuralNetwork BestBrain() { return bestBrain; }
+		NeuralNetwork SecondBestBrain() { return secondBestBrain; }
 
 	private:
 		std::vector< Object* > object_;

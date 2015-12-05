@@ -1,62 +1,86 @@
 #include <cstdlib>
 #include <cmath>
 #include "Config.h"
-#include "Object.h"
 #include "GameManager.h"
-#include "NeuralNetwork.h"
 
 void GameManager::checkRestart() {
   static int restartTimer = RESTART_TIMER;
-  static int newGenerationTimer = NUMBER_OF_ROUNDS;
-  
+
   if (restartTimer == 0) {
     manager_->clear();
     restartTimer = RESTART_TIMER;
-
-    bool useLearning = (generationNumber_ != 0);
-    createRobots(useLearning);
     
-    if (newGenerationTimer == 0) {
-      newGenerationTimer = NUMBER_OF_ROUNDS;
+    if (robotStorage_.size() == 0) {
+      // Show the best two robots battle
+      Object * robot0 = AbstractFactory::createRobot(-0.35, 0, robotRad, 0, 0, 1);
+      Object * robot1 = AbstractFactory::createRobot( 0.35, 0, robotRad, 1, 0, 0);
+      if (!manager_->learn().badBrains()) {
+        robot0->brain() = manager_->learn().BestBrain();
+        robot1->brain() = manager_->learn().BestBrain();
+      }
+      manager_->insert(robot0);
+      manager_->insert(robot1);
 
-      // New generation
+      // draw
+      bool useManager = true;
+      while (1) {
+        draw(useManager);
+        bool ran = manager_->execute();
+        if (!ran)
+          break;
+      }
+
+      // New generation creation
+      bool useLearning = (generationNumber_ != 0);
+      createRobots(useLearning);
       manager_->learn().clear();
       ++generationNumber_;
       std::cout << "Current max score: " << manager_->learn().getScore() << std::endl;
       std::cout << "Generation Number: " << generationNumber_ << std::endl;
     }
-    --newGenerationTimer;
-  }
+    
+    // pull a robot out of storage and set him up for battle
+    for (int i = 0; i < 2; ++i) {
+      Object * robot = robotStorage_[robotStorage_.size()-1];
+      robotStorage_.pop_back();
+      robot->getpos() = givePosition();
+      manager_->insert(robot);
+    }
+    std::cout << "gen: " << generationNumber_ << ", Robots in storage: " << robotStorage_.size() << std::endl;
 
+    positions_.clear();
+  }
+  
   --restartTimer;
 }
 
 void GameManager::run() {
+  std::cout << "Welcome to my Neural Network simulation.\n"
+            << "There is 100 brains in every generation" << std::endl;
   surface_ = singletonSDL2::getInstance();
-  std::cout << "Generation Number: " << generationNumber_ << std::endl;
   createRobots();
 
+  std::cout << "Generation Number: " << generationNumber_ << std::endl;
+  const int killTimer = 100;
+  int kt = killTimer;
   while(!quitProgram_) {
-    int start = SDL_GetTicks();
-
     if (manager_->size() == 1) {
-      if (manager_->getObject(0)->id() == "robot")
-        manager_->getObject(0)->score() += LAST_ONE_STANDING;
+      Object* o = manager_->getObject(0);
+      if (o->id() == "robot")
+        --kt;
+      if (kt == 0){
+        kt = killTimer;
+        manager_->remove(o);
+      }
     }
 
     bool ran = manager_->execute();
-
-    if (!ran) {
+    if (!ran)
       checkRestart();
-    }
 
-    if (generationNumber_ % 100 == 0) {
-      eventHandler();
-      updateScreen();
-
-      int end = SDL_GetTicks();
-      delay(start, end);
-    }
+    eventHandler();
+    bool useManager = false;
+    draw(useManager);
   }
 
   surface_->close();
@@ -95,15 +119,11 @@ bool GameManager::checkPointExitsOrNear(double x, double y, double rad) {
   return false;
 }
 
-void GameManager::createRobot(bool useLearning) {
-  double robotRad = 0.05;
-
-  // choose a starting (x, y)
+Vec2f GameManager::givePosition() {
   double x = 0, y = 0;
   while(1) {
     x = ((double)rand() / RAND_MAX) * 1.6 - .8, 
     y = ((double)rand() / RAND_MAX) * 1.6 - .8;
-
     if (checkPointExitsOrNear(x, y, robotRad))
       continue;
 
@@ -111,6 +131,12 @@ void GameManager::createRobot(bool useLearning) {
     break;
   }
 
+  return Vec2f(x, y);
+}
+
+void GameManager::createRobot(bool useLearning) {
+  // choose a starting (x, y)
+  double x = 0, y = 0;
   double r = ((double)rand() / RAND_MAX) / 2,
          g = ((double)rand() / RAND_MAX) / 2,
          b = ((double)rand() / RAND_MAX) / 2;
@@ -129,25 +155,32 @@ void GameManager::createRobot(bool useLearning) {
 
   // Mutate the robots brain.
   int check = rand() % 10 + 1;
-  if (check >= 6) {
-    //std::cout << "Mutate a robots brain." << std::endl;
+  if (check >= 6)
     robot->brain().randomWeightChange();
-  }
 
-  manager_->insert(robot);
+  robotStorage_.push_back(robot);
 }
 
 void GameManager::createRobots(bool useLearning) {
-  for (int i = 0; i < NUM_ROBOTS; ++i)
+  for (int i = 0; i < 100; ++i)
     createRobot(useLearning);
-
-  positions_.clear();
 }
 
-void GameManager::updateScreen() {
+void GameManager::draw(bool useManager) {
+  int start = SDL_GetTicks();
+  eventHandler();
+  updateScreen(useManager);
+  int end = SDL_GetTicks();
+  if (useManager)
+    delay(start, end);
+}
+
+void GameManager::updateScreen(bool useManager) {
   clearScreen();
   drawGrid();
-  manager_->draw();
+  if (useManager)
+    manager_->draw();
+
   display();
 }
 

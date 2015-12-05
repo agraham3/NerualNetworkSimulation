@@ -20,9 +20,8 @@ const int ROBOT_INFO_NUM = 6;
 const int NUM_RADAR_CAN_SEE = 5;
 const int LAYER_ZERO_SIZE = ROBOT_INFO_NUM + NUM_RADAR_CAN_SEE * 5;
 
-const int NUM_ROBOTS = 2;
 const int NUMBER_ROBOT_ACTIONS = 7;
-const int ROBOT_ENERGY = 1500;
+const int ROBOT_ENERGY = 750;
 const double SEE_GAP = PI/32;
 
 const int BULLET_TIMER = 15;
@@ -36,7 +35,6 @@ const int KILL_ROBOT = 800;
 const int LOOKING_NEAR_ROBOT = 140;
 const int SHOOT_NEAR_ROBOT = 250;
 const int NEAR_CENTER = 100;
-const int LAST_ONE_STANDING = 10;
 
 // Robot socre/energy loss
 const int STANDARD_ENERGY_LOSS = 1;
@@ -50,6 +48,5 @@ const int ROBOT_HIT_WALL = 10000;
 
 // other
 const int RESTART_TIMER = 50;
-const int NUMBER_OF_ROUNDS = 5;
 
 #endif
