@@ -1,7 +1,8 @@
 #include "Neuron.h"
 
 double Neuron::fire() {
-  return sigmoid(dotProduct(inputs, weights));
+	double n = sigmoid(dotProduct(inputs, weights));
+  return (n >= 0.5 ? n : 0);
 }
 
 

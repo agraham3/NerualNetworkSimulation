@@ -21,30 +21,31 @@ const int NUM_RADAR_CAN_SEE = 5;
 const int LAYER_ZERO_SIZE = ROBOT_INFO_NUM + NUM_RADAR_CAN_SEE * 5;
 
 const int NUMBER_ROBOT_ACTIONS = 7;
-const int ROBOT_ENERGY = 750;
-const double SEE_GAP = PI/32;
+const int ROBOT_ENERGY = 1500;
+const double SEE_GAP = PI/16;
 
 const int BULLET_TIMER = 15;
-const int NUM_ROBOT_BULLETS = 15;
-const int BULLET_COST = 10;
+const int NUM_ROBOT_BULLETS = 20;
+const int BULLET_COST = 8;
 
 // Robot score/energy gain
 const int ENERGY_GAIN = 200;
-const int RADAR_SEE_OBJECTS = 4;
-const int KILL_ROBOT = 800;
-const int LOOKING_NEAR_ROBOT = 140;
-const int SHOOT_NEAR_ROBOT = 250;
-const int NEAR_CENTER = 100;
+const int RADAR_SEE_OBJECTS = 10;
+const int KILL_ROBOT = 300;
+const int LOOKING_NEAR_ROBOT = 20;
+const int SHOOT_NEAR_ROBOT = 200;
+const int NEAR_CENTER = 20;
 
 // Robot socre/energy loss
 const int STANDARD_ENERGY_LOSS = 1;
-const int MOVE_ENERGY_LOSS = 5;
-const int ROTATE_ENERGY_LOSS = 2;
-const int SHOOTING_POINT_LOSS = 30;
-const int RADAR_SHOOT_NO_ROBOT = 80;
-const int ROBOT_DID_NOT_MOVE = 200;
-const int SAME_DIRECTION = 150;
-const int ROBOT_HIT_WALL = 10000;
+const int MOVE_ENERGY_LOSS = 6;
+const int ROTATE_ENERGY_LOSS = 3;
+const int SHOOTING_POINT_LOSS = 40;
+const int RADAR_SHOOT_NO_ROBOT = 100;
+const int ROBOT_DID_NOT_MOVE = 100;
+const int SAME_DIRECTION = 50;
+const int ROBOT_HIT_WALL = 100000;
+const int DIED_BY_BULLET = 800;
 
 // other
 const int RESTART_TIMER = 50;

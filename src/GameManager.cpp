@@ -11,6 +11,9 @@ void GameManager::checkRestart() {
     restartTimer = RESTART_TIMER;
     
     if (robotStorage_.size() == 0) {
+      manager_->learn().checkReset();
+      std::cout << "Current max score: " << manager_->learn().getScore() << std::endl;
+
       // Show the best two robots battle
       Object * robot0 = AbstractFactory::createRobot(-0.35, 0, robotRad, 0, 0, 1);
       Object * robot1 = AbstractFactory::createRobot( 0.35, 0, robotRad, 1, 0, 0);
@@ -24,6 +27,7 @@ void GameManager::checkRestart() {
       // draw
       bool useManager = true;
       while (1) {
+        eventHandler();
         draw(useManager);
         bool ran = manager_->execute();
         if (!ran)
@@ -35,7 +39,6 @@ void GameManager::checkRestart() {
       createRobots(useLearning);
       manager_->learn().clear();
       ++generationNumber_;
-      std::cout << "Current max score: " << manager_->learn().getScore() << std::endl;
       std::cout << "Generation Number: " << generationNumber_ << std::endl;
     }
     
@@ -50,7 +53,7 @@ void GameManager::checkRestart() {
 
     positions_.clear();
   }
-  
+
   --restartTimer;
 }
 
@@ -60,6 +63,9 @@ void GameManager::run() {
   surface_ = singletonSDL2::getInstance();
   createRobots();
 
+  clearScreen();
+  drawGrid();
+  display();
   std::cout << "Generation Number: " << generationNumber_ << std::endl;
   const int killTimer = 100;
   int kt = killTimer;
@@ -79,8 +85,6 @@ void GameManager::run() {
       checkRestart();
 
     eventHandler();
-    bool useManager = false;
-    draw(useManager);
   }
 
   surface_->close();
@@ -154,8 +158,8 @@ void GameManager::createRobot(bool useLearning) {
     throw NoBrain();
 
   // Mutate the robots brain.
-  int check = rand() % 10 + 1;
-  if (check >= 6)
+  int check = rand() % 4;
+  for (int i = 0; i < check; ++i)
     robot->brain().randomWeightChange();
 
   robotStorage_.push_back(robot);

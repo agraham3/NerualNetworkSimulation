@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "Learn.h"
 #include "Exceptions.h"
 #include "Config.h"
@@ -97,4 +98,23 @@ NeuralNetwork Learn::newBrain(double percentToTake) {
 		newBrain.replace(layerPositions[i], brain1.get_layer(layerPositions[i]));
 
 	return newBrain;
+}
+
+void Learn::checkReset() {
+	if (bestScore > prevScore) {
+		prevScore = bestScore;
+		return;
+	}
+
+	std::cout << "Resetting the score" << std::endl;
+	prevScore = 0;
+	bestScore = 0;
+	secondBestScore = 0;
+	if (bestBrain.size() == 0)
+		return;
+	
+	int n = rand() % 20 + 1;
+	std::cout << "Number of mutations: " << n << std::endl;
+	for(int i = 0; i < n; ++i)
+		bestBrain.randomWeightChange();
 }
