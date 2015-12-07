@@ -269,10 +269,9 @@ void Robot::draw() {
 
 void Robot::initBrain() {
   nn_.create_layer(LAYER_ZERO_SIZE);
-  nn_.create_layer(30);
-  nn_.create_layer(30);
-  nn_.create_layer(30);
-  nn_.create_layer(30);
-  nn_.create_layer(30);
+  nn_.create_layer(25);
+  nn_.create_layer(25);
+  nn_.create_layer(25);
+  nn_.create_layer(25);
   nn_.create_layer(NUMBER_ROBOT_ACTIONS);                    // last layer: size = number of actions
 }

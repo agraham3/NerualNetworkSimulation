@@ -44,7 +44,7 @@ const int SHOOTING_POINT_LOSS = 40;
 const int RADAR_SHOOT_NO_ROBOT = 100;
 const int ROBOT_DID_NOT_MOVE = 100;
 const int SAME_DIRECTION = 50;
-const int ROBOT_HIT_WALL = 100000;
+const int ROBOT_HIT_WALL = 60000;
 const int DIED_BY_BULLET = 800;
 
 // other

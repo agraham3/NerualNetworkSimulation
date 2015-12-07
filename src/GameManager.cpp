@@ -11,7 +11,7 @@ void GameManager::checkRestart() {
     restartTimer = RESTART_TIMER;
     
     if (robotStorage_.size() == 0) {
-      manager_->learn().checkReset();
+      //manager_->learn().checkReset();
       std::cout << "Current max score: " << manager_->learn().getScore() << std::endl;
 
       // Show the best two robots battle
