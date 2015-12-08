@@ -1,5 +1,7 @@
 #include <cstdlib>
+#include <algorithm>
 #include "Learn.h"
+#include "AbstractFactory.h"
 #include "Exceptions.h"
 #include "Config.h"
 
@@ -10,111 +12,83 @@ void Learn::insert(Object* r) {
 	object_.push_back(r);
 }
 
-int Learn::score(int pos) {
+int Learn::score(Object* o) {
 	int points = 0;
-	points += object_[pos]->score();
-	points += object_[pos]->framesLived();
+	points += o->score();
+	points += o->framesLived();
 	return points;
 }
 
-bool Learn::bestTwo() {
-	int pos1 = 0,
-			pos2 = 0,
-			pts1 = -99999,
-			pts2 = -99999;
+NeuralNetwork Learn::newBrain() {
+	NeuralNetwork brain = object_[object_.size() - 1]->brain();
+	object_.pop_back();
+	return brain;
+}
 
-	// Find the best two robots
+NeuralNetwork Learn::bestBrain() {
+	int max = -999999;
 	for (int i = 0; i < object_.size(); ++i) {
-		int points = score(i);
-		if (points > pts1) {
-			// set second best
-			pts2 = pts1;
-			pos2 = pos1;
+		int s = score(object_[i]);
+		if (s <= max)
+			continue;
 
-			// set best
-			pts1 = points;
-			pos1 = i;
-		}
+		max = s;
 	}
 
-	if (pts1 >= 0)
-		badBrains_ = false;
-	else
-		badBrains_ = true;
-
-	// set o1, o2 as the positions in object_
-	// 		where o1 is the best robot and
-	//    o2 is the second best robot
-	o1 = pos1; 
-	o2 = pos2;
-
-	if (pts1 > bestScore) {
-		secondBestScore = bestScore;
-		secondBestBrain = bestBrain;
-
-		bestScore = pts1;
-		bestBrain = object_[o1]->brain();
-		return true;
+	for (int i = 0; i < object_.size(); ++i) {
+		int s = score(object_[i]);
+		if (s == max)
+			return object_[i]->brain();
 	}
 
-	return false;
+	std::cout << "Could not find the brain...\n" << std::endl;
+	int r = rand() % object_.size();
+	return object_[r]->brain();
 }
 
-NeuralNetwork Learn::newBrain(double percentToTake) {
-	if (percentToTake > 1)
-		throw OverOneHunderedPercent();
-
-	bool newBest = bestTwo();		// find the best two robots: This sets o1, o2
-															// 			where o1 is the best robot stored as a pos in object_ and
-															//  		o2 is the second best robot stored as a pos in object_
-	NeuralNetwork brain1 = object_[o1]->brain(),
-								brain2 = object_[o2]->brain();
-	NeuralNetwork newBrain = NeuralNetwork(brain2);
-
-	if (!newBest) {
-		brain1 = bestBrain;
-		brain2 = secondBestBrain;
-	}
-
-	// Make random brains based off: brain1, brain2
-
-	// Half of the best robots brain will be randomly chosen
-	std::vector< int > layerPositions;
-	int brain1size = brain1.size();
-	int a = brain1size * percentToTake;	
-	
-	// Randomly pick unique layers from brain 1
-	int x = 0;
-	while (x != a) {
-		int n = rand() % brain1size;
-		if (!inList(n, layerPositions)) {
-			layerPositions.push_back(n);
-			++x;
-		}
-	}
-
-	// Give brain2 a percent "percentToTake" of brain1
-	for (int i = 0; i < layerPositions.size(); ++i)
-		newBrain.replace(layerPositions[i], brain1.get_layer(layerPositions[i]));
-
-	return newBrain;
+void Learn::remove(Object* o) {
+  object_.erase(std::remove(object_.begin(), object_.end(), o), object_.end());
+  delete o;
 }
 
-void Learn::checkReset() {
-	if (bestScore > prevScore) {
-		prevScore = bestScore;
-		return;
+void Learn::run() {
+	// remove the two deminstration robots
+	object_.pop_back();
+	object_.pop_back();
+
+	// throw away half of the brains: (mainly the bad ones)
+	// collect the points into a list
+	std::deque<int> listPoints;
+	for (int i = 0; i < object_.size(); ++i)
+		listPoints.push_back(score(object_[i]));
+
+	// sort the list
+	std::sort(listPoints.begin(), listPoints.end());
+	score_ = listPoints[listPoints.size() - 1];
+
+	// remove the worst half
+	std::vector<Object*> o;
+	for (int i = 0; i < 50; ++i) {
+		int n = listPoints[0];
+
+		// find the robot with this score
+		for (int j = 0; j < object_.size(); ++j) {
+			if (score(object_[j]) != n)
+				continue;
+
+			remove(object_[j]);
+  		break;
+		}
+
+		listPoints.pop_front();
 	}
 
-	std::cout << "Resetting the score" << std::endl;
-	prevScore = 0;
-	bestScore = 0;
-	secondBestScore = 0;
-	if (bestBrain.size() == 0)
-		return;
-	
-	int n = rand() % 20 + 1;
-	std::cout << "Number of mutations: " << n << std::endl;
-	for(int i = 0; i < n; ++i)
-		bestBrain.randomWeightChange();
+	// create 50 new brains
+	for(int i = 0; i < 50; ++i) {
+		NeuralNetwork newBrain = object_[i]->brain();
+		newBrain.randomWeightChange();
+  	Object * robot = AbstractFactory::createRobot();
+  	robot->brain() = newBrain;
+		object_.push_back(robot);
+	}
 }

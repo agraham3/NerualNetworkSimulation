@@ -11,16 +11,16 @@ void GameManager::checkRestart() {
     restartTimer = RESTART_TIMER;
     
     if (robotStorage_.size() == 0) {
-      //manager_->learn().checkReset();
-      std::cout << "Current max score: " << manager_->learn().getScore() << std::endl;
-
+      std::cout << "Current top score: " << manager_->learn().score() << std::endl;
+      
       // Show the best two robots battle
       Object * robot0 = AbstractFactory::createRobot(-0.35, 0, robotRad, 0, 0, 1);
       Object * robot1 = AbstractFactory::createRobot( 0.35, 0, robotRad, 1, 0, 0);
-      if (!manager_->learn().badBrains()) {
-        robot0->brain() = manager_->learn().BestBrain();
-        robot1->brain() = manager_->learn().BestBrain();
-      }
+      // something to show the best brains
+      NeuralNetwork brain = manager_->learn().bestBrain();
+      robot0->brain() = brain;
+      robot1->brain() = brain;
+
       manager_->insert(robot0);
       manager_->insert(robot1);
 
@@ -35,10 +35,10 @@ void GameManager::checkRestart() {
       }
 
       // New generation creation
+      ++generationNumber_;
       bool useLearning = (generationNumber_ != 0);
       createRobots(useLearning);
       manager_->learn().clear();
-      ++generationNumber_;
       std::cout << "Generation Number: " << generationNumber_ << std::endl;
     }
     
@@ -49,8 +49,8 @@ void GameManager::checkRestart() {
       robot->getpos() = givePosition();
       manager_->insert(robot);
     }
-    std::cout << "gen: " << generationNumber_ << ", Robots in storage: " << robotStorage_.size() << std::endl;
 
+    std::cout << "gen: " << generationNumber_ << ", Robots in storage: " << robotStorage_.size() << std::endl;
     positions_.clear();
   }
 
@@ -62,24 +62,11 @@ void GameManager::run() {
             << "There is 100 brains in every generation" << std::endl;
   surface_ = singletonSDL2::getInstance();
   createRobots();
-
   clearScreen();
   drawGrid();
   display();
   std::cout << "Generation Number: " << generationNumber_ << std::endl;
-  const int killTimer = 100;
-  int kt = killTimer;
   while(!quitProgram_) {
-    if (manager_->size() == 1) {
-      Object* o = manager_->getObject(0);
-      if (o->id() == "robot")
-        --kt;
-      if (kt == 0){
-        kt = killTimer;
-        manager_->remove(o);
-      }
-    }
-
     bool ran = manager_->execute();
     if (!ran)
       checkRestart();
@@ -147,10 +134,8 @@ void GameManager::createRobot(bool useLearning) {
   Object * robot = AbstractFactory::createRobot(x, y, robotRad, r, g, b);
 
   if (useLearning) {
-      double percent = ((double)rand() / RAND_MAX) / 2 + 0.5;
-      NeuralNetwork newBrain = manager_->learn().newBrain(percent);
-      if (!manager_->learn().badBrains())
-        robot->brain() = newBrain;
+    NeuralNetwork newBrain = manager_->learn().newBrain();
+    robot->brain() = newBrain;
   }
 
   int brainSize = robot->brain().size();
@@ -166,6 +151,8 @@ void GameManager::createRobot(bool useLearning) {
 }
 
 void GameManager::createRobots(bool useLearning) {
+  if (useLearning)
+    manager_->learn().run();
   for (int i = 0; i < 100; ++i)
     createRobot(useLearning);
 }
