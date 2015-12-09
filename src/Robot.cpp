@@ -73,7 +73,7 @@ bool Robot::handleAction(std::vector<double> act) {
   // points for being away from the wall
   Vec2f pos = Object::getpos();
   double x = sqrt(pos.x() * pos.x() + pos.y() * pos.y());
-  if (x <= 0.3)
+  if (x <= 0.45)
     score_ += NEAR_CENTER;
 
   if ((act[0] >= 0.5 || act[1] >= 0.5 ||

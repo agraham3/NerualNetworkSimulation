@@ -8,7 +8,7 @@
 class Learn {
 	public:
 		Learn()
-		: score_(-999999)
+		: scoreH_(0), scoreL_(0)
 		{}
 
 		~Learn() {
@@ -25,7 +25,8 @@ class Learn {
 
 		int size() { return object_.size(); }
 		void run();
-		int score() { return score_; }
+		int scoreHigh() { return scoreH_; }
+		int scoreLow()  { return scoreL_; }
 
 		NeuralNetwork bestBrain();
 
@@ -34,7 +35,7 @@ class Learn {
 
 	private:
 		std::deque< Object* > object_;
-		int score_;
+		int scoreH_, scoreL_;
 
 		int score(Object*);
 		bool bestTwo();

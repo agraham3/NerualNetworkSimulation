@@ -64,7 +64,8 @@ void Learn::run() {
 
 	// sort the list
 	std::sort(listPoints.begin(), listPoints.end());
-	score_ = listPoints[listPoints.size() - 1];
+	scoreH_ = listPoints[listPoints.size() - 1];
+	scoreL_ = listPoints[0];
 
 	// remove the worst half
 	std::vector<Object*> o;
@@ -83,12 +84,76 @@ void Learn::run() {
 		listPoints.pop_front();
 	}
 
-	// create 50 new brains
-	for(int i = 0; i < 50; ++i) {
-		NeuralNetwork newBrain = object_[i]->brain();
-		newBrain.randomWeightChange();
-  	Object * robot = AbstractFactory::createRobot();
-  	robot->brain() = newBrain;
-		object_.push_back(robot);
+	// create 50 new brains: asumes brains are of the same size
+	std::deque<Object* > temp = object_;
+	while (1) {
+		if (temp.size() == 0)
+			break;
+
+		int t1 = rand() % temp.size(),
+				t2 = rand() % temp.size();
+		while (t1 == t2)
+			t2 = rand() % temp.size();
+
+		NeuralNetwork brain1 = temp[t1]->brain();
+		NeuralNetwork brain2 = temp[t2]->brain();
+		NeuralNetwork nb1 = brain1;
+		NeuralNetwork nb2 = brain2;
+		temp.erase(temp.begin() + t1);
+		temp.erase(temp.begin() + t2 - (t2 == 0 ? 0 : 1));
+
+		// create new layers for new brain 1 and 2
+		for (int a = 0; a < brain1.size(); ++a) {									// loop through layers
+			std::deque< std::vector<double> > v1;
+			std::deque< std::vector<double> > v2;
+			for (int b = 0; b < brain1.get_layer(a).size(); ++b) {   // fill two vectors with the nuerons weights from both brains
+				v1.push_back(brain1.get_layer(a).get_neuron(b).getWeights());
+				v2.push_back(brain2.get_layer(a).get_neuron(b).getWeights());
+			}
+
+			// Loop through the nueron's weights: DNA Merging
+			int pos = 0;
+			while(1) {
+				if (v1.size() == 0)
+					break;
+
+				std::vector<double> w1;
+				std::vector<double> w2;
+
+				// pull out the weights from each brain: then remove them from the list
+				int p1 = rand() % v1.size(),
+						p2 = rand() % v2.size();
+				std::vector<double> wa = v1[p1];
+				std::vector<double> wb = v2[p2];
+				v1.erase(v1.begin() + p1);
+				v2.erase(v2.begin() + p2);
+
+				// DNA part
+				for(int n = 0; n < wa.size(); ++n) {
+					if (n % 2 == 0) {
+						w1.push_back(wa[n]);
+						w2.push_back(wb[n]);
+					}
+					else {
+						w1.push_back(wb[n]);
+						w2.push_back(wa[n]);
+					}
+				}
+
+				// assign to neuron
+				nb1.get_layer(a).get_neuron(pos).setWeights(w1);
+				nb2.get_layer(a).get_neuron(pos).setWeights(w2);
+
+				++pos;
+			}
+		}
+
+		// create 2 new brains
+		Object* robot0 = AbstractFactory::createRobot();
+		Object* robot1 = AbstractFactory::createRobot();
+		robot0->brain() = nb1;
+		robot1->brain() = nb2;
+		object_.push_back(robot0);
+		object_.push_back(robot1);
 	}
 }

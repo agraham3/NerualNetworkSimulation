@@ -11,12 +11,23 @@ void GameManager::checkRestart() {
     restartTimer = RESTART_TIMER;
     
     if (robotStorage_.size() == 0) {
-      std::cout << "Current top score: " << manager_->learn().score() << std::endl;
-      
+      std::cout << "Current socre range: "
+                << '[' << manager_->learn().scoreLow() << ", "
+                << manager_->learn().scoreHigh() << ']' << std::endl;
+
       // Show the best two robots battle
-      Object * robot0 = AbstractFactory::createRobot(-0.35, 0, robotRad, 0, 0, 1);
-      Object * robot1 = AbstractFactory::createRobot( 0.35, 0, robotRad, 1, 0, 0);
-      // something to show the best brains
+      double x1 = ((double)rand() / RAND_MAX) * 1.6 - .8, 
+             x2 = ((double)rand() / RAND_MAX) * 1.6 - .8,
+             y1 = ((double)rand() / RAND_MAX) * 1.6 - .8, 
+             y2 = ((double)rand() / RAND_MAX) * 1.6 - .8;
+      while(checkPointExitsOrNear(x2, y2, robotRad)) {
+        x2 = ((double)rand() / RAND_MAX) * 1.6 - .8, 
+        y2 = ((double)rand() / RAND_MAX) * 1.6 - .8;
+      }
+
+      Object * robot0 = AbstractFactory::createRobot(x1, y1, robotRad, 0, 0, 1);
+      Object * robot1 = AbstractFactory::createRobot(x2, y2, robotRad, 1, 0, 0);
+
       NeuralNetwork brain = manager_->learn().bestBrain();
       robot0->brain() = brain;
       robot1->brain() = brain;
@@ -50,7 +61,7 @@ void GameManager::checkRestart() {
       manager_->insert(robot);
     }
 
-    std::cout << "gen: " << generationNumber_ << ", Robots in storage: " << robotStorage_.size() << std::endl;
+    //std::cout << "gen: " << generationNumber_ << ", Robots in storage: " << robotStorage_.size() << std::endl;
     positions_.clear();
   }
 
@@ -143,8 +154,8 @@ void GameManager::createRobot(bool useLearning) {
     throw NoBrain();
 
   // Mutate the robots brain.
-  int check = rand() % 4;
-  for (int i = 0; i < check; ++i)
+  int check = rand() % 10;
+  if (check >= 9)
     robot->brain().randomWeightChange();
 
   robotStorage_.push_back(robot);

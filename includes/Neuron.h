@@ -26,6 +26,7 @@ class Neuron {
    void clear();
 
    void setWeight(const double value, const int pos) { weights[pos] = value; }
+   void setWeights(std::vector<double> v) { weights = v; }
 
  private:
   std::vector< double > weights;

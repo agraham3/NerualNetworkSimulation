@@ -43,6 +43,8 @@ class NeuronLayer {
 
     std::vector<Neuron>& neurons() { return neuron; }
     std::vector<Neuron> neurons() const { return neuron; }
+    Neuron& get_neuron(int n)       { return neuron[n]; }
+    Neuron  get_neuron(int n) const { return neuron[n]; }
 
   private:
   	std::vector< Neuron > neuron;
