@@ -20,8 +20,10 @@ int Learn::score(Object* o) {
 }
 
 NeuralNetwork Learn::newBrain() {
-	NeuralNetwork brain = object_[object_.size() - 1]->brain();
-	object_.pop_back();
+	int pos = rand() % object_.size();
+	NeuralNetwork brain = object_[pos]->brain();
+	delete object_[pos];
+	object_.erase(object_.begin() + pos);
 	return brain;
 }
 
@@ -53,8 +55,8 @@ void Learn::remove(Object* o) {
 
 void Learn::run() {
 	// remove the two deminstration robots
-	object_.pop_back();
-	object_.pop_back();
+	while(object_.size() != 100)
+		object_.pop_back();
 
 	// throw away half of the brains: (mainly the bad ones)
 	// collect the points into a list
@@ -103,7 +105,8 @@ void Learn::run() {
 		temp.erase(temp.begin() + t2 - (t2 == 0 ? 0 : 1));
 
 		// create new layers for new brain 1 and 2
-		for (int a = 0; a < brain1.size(); ++a) {									// loop through layers
+		// 		I skip the 1st layer: cutting 1 weight does not make sence
+		for (int a = 1; a < brain1.size(); ++a) {									// loop through layers
 			std::deque< std::vector<double> > v1;
 			std::deque< std::vector<double> > v2;
 			for (int b = 0; b < brain1.get_layer(a).size(); ++b) {   // fill two vectors with the nuerons weights from both brains
@@ -129,8 +132,11 @@ void Learn::run() {
 				v2.erase(v2.begin() + p2);
 
 				// DNA part
+				int thisOne = 0;
 				for(int n = 0; n < wa.size(); ++n) {
-					if (n % 2 == 0) {
+					if (n % 5 == 0)
+						thisOne = 1 - thisOne;
+					if (thisOne) {
 						w1.push_back(wa[n]);
 						w2.push_back(wb[n]);
 					}

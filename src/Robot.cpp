@@ -73,7 +73,7 @@ bool Robot::handleAction(std::vector<double> act) {
   // points for being away from the wall
   Vec2f pos = Object::getpos();
   double x = sqrt(pos.x() * pos.x() + pos.y() * pos.y());
-  if (x <= 0.45)
+  if (x <= 0.55)
     score_ += NEAR_CENTER;
 
   if ((act[0] >= 0.5 || act[1] >= 0.5 ||
@@ -269,9 +269,11 @@ void Robot::draw() {
 
 void Robot::initBrain() {
   nn_.create_layer(LAYER_ZERO_SIZE);
-  nn_.create_layer(25);
-  nn_.create_layer(25);
-  nn_.create_layer(25);
-  nn_.create_layer(25);
+  nn_.create_layer(10);
+  nn_.create_layer(10);
+  nn_.create_layer(10);
+  nn_.create_layer(10);
+  nn_.create_layer(10);
+  nn_.create_layer(10);
   nn_.create_layer(NUMBER_ROBOT_ACTIONS);                    // last layer: size = number of actions
 }

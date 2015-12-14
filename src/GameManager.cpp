@@ -11,38 +11,39 @@ void GameManager::checkRestart() {
     restartTimer = RESTART_TIMER;
     
     if (robotStorage_.size() == 0) {
-      std::cout << "Current socre range: "
-                << '[' << manager_->learn().scoreLow() << ", "
-                << manager_->learn().scoreHigh() << ']' << std::endl;
-
       // Show the best two robots battle
-      double x1 = ((double)rand() / RAND_MAX) * 1.6 - .8, 
-             x2 = ((double)rand() / RAND_MAX) * 1.6 - .8,
-             y1 = ((double)rand() / RAND_MAX) * 1.6 - .8, 
-             y2 = ((double)rand() / RAND_MAX) * 1.6 - .8;
-      while(checkPointExitsOrNear(x2, y2, robotRad)) {
-        x2 = ((double)rand() / RAND_MAX) * 1.6 - .8, 
-        y2 = ((double)rand() / RAND_MAX) * 1.6 - .8;
-      }
+      if (generationNumber_ % 20 == 0) {
+        for (int i = 0; i < 3; ++i) {
+          std::cout << "Fight num: " << i + 1 << std::endl;
+          double x1 = ((double)rand() / RAND_MAX) - 0.5, 
+                 x2 = ((double)rand() / RAND_MAX) - 0.5,
+                 y1 = ((double)rand() / RAND_MAX) - 0.5, 
+                 y2 = ((double)rand() / RAND_MAX) - 0.5;
+          while(checkPointExitsOrNear(x2, y2, robotRad)) {
+            x2 = ((double)rand() / RAND_MAX) - 0.5, 
+            y2 = ((double)rand() / RAND_MAX) - 0.5;
+          }
 
-      Object * robot0 = AbstractFactory::createRobot(x1, y1, robotRad, 0, 0, 1);
-      Object * robot1 = AbstractFactory::createRobot(x2, y2, robotRad, 1, 0, 0);
+          Object * robot0 = AbstractFactory::createRobot(x1, y1, robotRad, 0, 0, 1);
+          Object * robot1 = AbstractFactory::createRobot(x2, y2, robotRad, 1, 0, 0);
 
-      NeuralNetwork brain = manager_->learn().bestBrain();
-      robot0->brain() = brain;
-      robot1->brain() = brain;
+          NeuralNetwork brain = manager_->learn().bestBrain();
+          robot0->brain() = brain;
+          robot1->brain() = brain;
 
-      manager_->insert(robot0);
-      manager_->insert(robot1);
+          manager_->insert(robot0);
+          manager_->insert(robot1);
 
-      // draw
-      bool useManager = true;
-      while (1) {
-        eventHandler();
-        draw(useManager);
-        bool ran = manager_->execute();
-        if (!ran)
-          break;
+          // draw the demo
+          bool useManager = true;
+          while (!quitProgram_) {
+            eventHandler();
+            draw(useManager);
+            bool ran = manager_->execute();
+            if (!ran)
+              break;
+          }
+        }
       }
 
       // New generation creation
@@ -50,7 +51,10 @@ void GameManager::checkRestart() {
       bool useLearning = (generationNumber_ != 0);
       createRobots(useLearning);
       manager_->learn().clear();
-      std::cout << "Generation Number: " << generationNumber_ << std::endl;
+      std::cout << "Generation Number: " << generationNumber_ 
+                << "    score range: "
+                << '[' << manager_->learn().scoreLow() << ", "
+                << manager_->learn().scoreHigh() << ']' << std::endl;
     }
     
     // pull a robot out of storage and set him up for battle
@@ -154,8 +158,8 @@ void GameManager::createRobot(bool useLearning) {
     throw NoBrain();
 
   // Mutate the robots brain.
-  int check = rand() % 10;
-  if (check >= 9)
+  int check = rand() % 10 + 1;
+  if (check >= 8)
     robot->brain().randomWeightChange();
 
   robotStorage_.push_back(robot);
